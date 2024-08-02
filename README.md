@@ -32,6 +32,11 @@ The API is structured into several layers:
 ### Entities and DTOs
 * **Entities**: Include models for Home, Room, and Booking, each with specific fields.
 * **DTOs**: Used for efficient data transfer across different layers.
+  
+## API Documentation
+
+For detailed API documentation, please refer to [API_Documentation.md](./API_Documentation.md).
+
 
 ### Configuration
 Ensure `appsettings.json` is properly configured:
