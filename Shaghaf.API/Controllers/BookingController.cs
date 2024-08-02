@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Services.Contract;
-using Stripe;
-using System;
-using System.Threading.Tasks;
+using Talabat.APIs.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class BookingController : ControllerBase
-{
+  [Authorize]
+  public class BookingController : BaseApiController
+   {
     private readonly IBookingService _bookingService;
     private readonly IPaymentService _paymentService;
-   // private const string WebhookSecret = "whsec_8wX0XPHOBXyuPGs7E0BqDPpgc7lcheFs";
+    // private const string WebhookSecret = "whsec_8wX0XPHOBXyuPGs7E0BqDPpgc7lcheFs";
 
     // Constructor to initialize the booking and payment services
     public BookingController(IBookingService bookingService, IPaymentService paymentService)
@@ -30,6 +28,7 @@ public class BookingController : ControllerBase
 
     // Endpoint to get the details of a specific booking by ID
     [HttpGet("{bookingId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<BookingDto>> GetBookingDetails(int bookingId)
     {
         // Retrieve the booking details asynchronously using the booking service
@@ -88,51 +87,56 @@ public class BookingController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-    #region Other way stripe-webhook
-    //[HttpPost("stripe-webhook")]
-    //public async Task<IActionResult> StripeWebhook()
-    //{
-    //    var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-    //    var stripeSignature = Request.Headers["Stripe-Signature"];
 
-    //    Console.WriteLine($"Received Stripe-Signature header: {stripeSignature}");
+    #region Alternative Method: Stripe Webhook
+    /*
+    [HttpPost("stripe-webhook")]
+    public async Task<IActionResult> StripeWebhook()
+    {
+        var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+        var stripeSignature = Request.Headers["Stripe-Signature"];
 
-    //    if (string.IsNullOrEmpty(stripeSignature))
-    //    {
-    //        return BadRequest("Missing Stripe-Signature header.");
-    //    }
+        Console.WriteLine($"Received Stripe-Signature header: {stripeSignature}");
 
-    //    try
-    //    {
-    //        var stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, WebhookSecret);
+        if (string.IsNullOrEmpty(stripeSignature))
+        {
+            return BadRequest("Missing Stripe-Signature header.");
+        }
 
-    //        Console.WriteLine("Received Stripe Event: " + JsonSerializer.Serialize(stripeEvent, new JsonSerializerOptions { WriteIndented = true }));
+        try
+        {
+            var stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, WebhookSecret);
 
-    //        switch (stripeEvent.Type)
-    //        {
-    //            case Events.CheckoutSessionCompleted:
-    //            case Events.PaymentIntentCreated:
-    //            case Events.PaymentIntentSucceeded:
-    //            case Events.ChargeSucceeded:
-    //                var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
-    //                if (paymentIntent != null)
-    //                {
-    //                    Console.WriteLine($"PaymentIntent ID: {paymentIntent.Id}");
-    //                    await _bookingService.UpdateBookingAsync(new BookingDto { SessionId = paymentIntent.Id, Status = "confirmed" });
-    //                }
-    //                break;
-    //            default:
-    //                Console.WriteLine($"Unhandled event type: {stripeEvent.Type}");
-    //                break;
-    //        }
+            Console.WriteLine("Received Stripe Event: " + JsonSerializer.Serialize(stripeEvent, new JsonSerializerOptions { WriteIndented = true }));
 
-    //        return Ok();
-    //    }
-    //    catch (StripeException e)
-    //    {
-    //        return BadRequest(e.Message);
-    //    }
-    //} 
-    #endregion  
+            // Handle different types of Stripe events
+            switch (stripeEvent.Type)
+            {
+                case Events.CheckoutSessionCompleted:
+                case Events.PaymentIntentCreated:
+                case Events.PaymentIntentSucceeded:
+                case Events.ChargeSucceeded:
+                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+                    if (paymentIntent != null)
+                    {
+                        Console.WriteLine($"PaymentIntent ID: {paymentIntent.Id}");
+                        // Update the booking status to confirmed
+                        await _bookingService.UpdateBookingAsync(new BookingDto { SessionId = paymentIntent.Id, Status = "confirmed" });
+                    }
+                    break;
+                default:
+                    Console.WriteLine($"Unhandled event type: {stripeEvent.Type}");
+                    break;
+            }
+
+            return Ok();
+        }
+        catch (StripeException e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+    */
+    #endregion
 
 }

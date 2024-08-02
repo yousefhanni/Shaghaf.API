@@ -7,10 +7,13 @@ using Shaghaf.Core.Services.Contract;
 using Talabat.APIs.Controllers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Shaghaf.API.Controllers
 {
     // The RoomsController provides endpoints to manage and retrieve room-related data
+    [Authorize]
+
     public class RoomsController : BaseApiController
     {
         private readonly IRoomService _roomService;
@@ -51,6 +54,7 @@ namespace Shaghaf.API.Controllers
         // Creates a new room using the details provided in the RoomToCreateDto object
         // Returns the created RoomDto object if successful, otherwise returns a 400 status
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<RoomDto?>> CreateRoom(RoomToCreateDto model)
         {
             var room = await _roomService.CreateRoomAsync(model);

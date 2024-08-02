@@ -103,29 +103,40 @@ namespace Shaghaf.Application.Services
             return booking;
         }
 
-        // Check payment status for a booking asynchronously
+       /// Polling Service instead of Webhook :
+       /// This service periodically checks the payment status of a booking by querying the payment provider's API.
+       /// It retrieves the booking details from the database, uses the session ID to fetch the payment status from the SessionService,
+       /// and updates the booking status in the database based on the payment status. This approach is used as an alternative
+       /// to real-time notifications (webhooks) from the payment provider, providing a way to manually or periodically confirm payment status.
         public async Task<string> CheckPaymentStatusAsync(int bookingId)
         {
+            // Retrieve the booking details using the booking ID
             var booking = await _unitOfWork.Repository<Booking>().GetByIdAsync(bookingId);
             if (booking == null) throw new KeyNotFoundException("Booking not found");
 
+            // Ensure the booking has a session ID
             if (string.IsNullOrEmpty(booking.SessionId)) throw new InvalidOperationException("Session ID not found for the booking");
 
+            // Create a session service to interact with the session API
             var service = new SessionService();
             var session = await service.GetAsync(booking.SessionId);
 
-            if (session.PaymentStatus == "paid")
+            // Check the payment status of the session and update the booking status accordingly
+            switch (session.PaymentStatus)
             {
-                booking.Status = BookingStatus.Confirmed;
-                await _unitOfWork.CompleteAsync();
-            }
-            else if (session.PaymentStatus == "unpaid" || session.PaymentStatus == "no_payment_required")
-            {
-                booking.Status = BookingStatus.Failed;
-                await _unitOfWork.CompleteAsync();
+                case "paid":
+                    booking.Status = BookingStatus.Confirmed;
+                    break;
+                case "unpaid":
+                case "no_payment_required":
+                    booking.Status = BookingStatus.Failed;
+                    break;
             }
 
+            // Save changes to the booking status
+            await _unitOfWork.CompleteAsync();
             return booking.Status.ToString();
         }
+
     }
 }

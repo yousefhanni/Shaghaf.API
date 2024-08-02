@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Shaghaf.Application.Services;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities.HomeEntities;
@@ -11,6 +12,7 @@ using Talabat.APIs.Controllers;
 namespace Shaghaf.API.Controllers
 {
     // The HomeController provides endpoints to manage and retrieve home-related data
+    [Authorize]
     public class HomeController : BaseApiController
     {
         private readonly IHomeService _homeService;

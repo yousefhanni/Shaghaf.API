@@ -26,6 +26,10 @@ namespace Shaghaf.Infrastructure.Services
         // Register a new user
         public async Task<AuthModel> RegisterAsync(RegisterModel model)
         {
+            // Check if phone number already exists to ensure data integrity and security
+            if (await _userManager.Users.AnyAsync(u => u.PhoneNumber == model.PhoneNumber))
+                return new AuthModel { Message = "Phone number is already registered!" };
+
             // Check if username already exists
             if (await _userManager.FindByNameAsync(model.Username) != null)
                 return new AuthModel { Message = "Username is already registered!" };
@@ -36,7 +40,7 @@ namespace Shaghaf.Infrastructure.Services
                 UserName = model.Username,
                 PhoneNumber = model.PhoneNumber
             };
-
+            
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
@@ -47,21 +51,21 @@ namespace Shaghaf.Infrastructure.Services
 
             // Assign the user to "User" role
             await _userManager.AddToRoleAsync(user, "User");
-
+                
             // Generate JWT token
             var jwtSecurityToken = await CreateJwtToken(user);
 
             return new AuthModel
             {
                 Message = "Registration successful.",
-                Email = user.Email,
-                ExpiresOn = jwtSecurityToken.ValidTo,
                 IsAuthenticated = true,
+                Username = user.UserName,
                 Roles = new List<string> { "User" },
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-                Username = user.UserName
+                ExpiresOn = jwtSecurityToken.ValidTo
             };
         }
+
 
         // User login
         public async Task<AuthModel> LoginAsync(LoginModel model)
@@ -73,7 +77,7 @@ namespace Shaghaf.Infrastructure.Services
 
             if (user is null || !await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                authModel.Message = "Phone number or Password is incorrect!";
+                authModel.Message = "Phone number or password is incorrect!";
                 return authModel;
             }
 
@@ -83,13 +87,13 @@ namespace Shaghaf.Infrastructure.Services
 
             authModel.IsAuthenticated = true;
             authModel.Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-            authModel.Email = user.Email;
             authModel.Username = user.UserName;
             authModel.ExpiresOn = jwtSecurityToken.ValidTo;
             authModel.Roles = rolesList.ToList();
 
             return authModel;
         }
+
 
         // Add role to a user
         public async Task<string> AddRoleAsync(AddRoleModel model)
@@ -107,6 +111,7 @@ namespace Shaghaf.Infrastructure.Services
             return result.Succeeded ? string.Empty : "Something went wrong";
         }
 
+
         // Create JWT token
         private async Task<JwtSecurityToken> CreateJwtToken(AppUser user)
         {
@@ -116,11 +121,10 @@ namespace Shaghaf.Infrastructure.Services
 
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("uid", user.Id)
-        }
+        new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim("uid", user.Id)
+    }
             .Union(userClaims)
             .Union(roleClaims);
 
@@ -136,6 +140,7 @@ namespace Shaghaf.Infrastructure.Services
 
             return jwtSecurityToken;
         }
+
     }
 }
 
