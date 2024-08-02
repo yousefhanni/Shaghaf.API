@@ -17,6 +17,14 @@ using Stripe;
 using Shaghaf.API.Helpers;
 using Shaghaf.Infrastructure.Sevices.Implementaion;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Shaghaf.Infrastructure.IdentityData;
+using Microsoft.AspNetCore.Identity;
+using Shaghaf.Core.Entities.IdentityEntities;
+using Shaghaf.Infrastructure.IdentityData.SeedData;
+using Shaghaf.Infrastructure.Services;
 
 namespace Shaghaf.API
 {
@@ -26,17 +34,18 @@ namespace Shaghaf.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Access configuration
+            var configuration = builder.Configuration;
+
+            // Add services to the container    .
+            #region Configure Services
+
             // Add services to the container.
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
             });
 
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-                c.MapType<Newtonsoft.Json.Linq.JObject>(() => new OpenApiSchema { Type = "object" });
-            });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -46,6 +55,10 @@ namespace Shaghaf.API
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            // Add DbContext for AppIdentity with SQL Server configuration
+            builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")));
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped(typeof(IRoomService), typeof(RoomService));
@@ -57,47 +70,87 @@ namespace Shaghaf.API
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+            //DI to AuthService
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
+            #region Stripe configurations
             // Add Stripe configuration settings
             builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
             // Retrieve Stripe settings and set the API key
             var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>();
-            if (stripeSettings == null)
-            {
-                throw new ArgumentNullException("StripeSettings are not configured correctly in appsettings.json.");
-            }
-            Console.WriteLine($"Stripe Secret Key: {stripeSettings.SecretKey}");
-             StripeConfiguration.ApiKey = stripeSettings.SecretKey;
-            // Add CORS services
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll",
-                    builder =>
-                    {
-                        builder.AllowAnyOrigin()
-                               .AllowAnyMethod()
-                               .AllowAnyHeader();
-                    });
-            });
-            var app = builder.Build();
+            StripeConfiguration.ApiKey = stripeSettings.SecretKey;
+            #endregion
 
+
+            #region JWT configurations
+
+            // Add Identity services to the application
+            // IdentityRole: Represents a role in the ASP.NET Core Identity system
+            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            // Bind the JWT configuration section from appsettings.json to the JWT settings class
+            builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
+
+            // Add JWT Configuration
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata = false;
+                o.SaveToken = false;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidAudience = configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                };
+            });  
+            #endregion
+
+            #endregion
+
+            var app = builder.Build();
+            #region Seed roles
+            // Seed roles during application program
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    SeedData.Initialize(services).Wait();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
+            } 
+            #endregion
+
+            #region Configure MiddleWares
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
-
             }
             app.UseStaticFiles();
             app.UseHttpsRedirection();
-            app.UseCors("AllowAll");
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.MapControllers();
 
-            app.Run();
+            app.Run(); 
+            #endregion
+
         }
     }
 }

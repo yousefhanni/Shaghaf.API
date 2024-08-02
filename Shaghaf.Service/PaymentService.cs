@@ -4,8 +4,6 @@ using Shaghaf.Core.Entities;
 using Shaghaf.Core.Services.Contract;
 using Microsoft.Extensions.Options;
 using AutoMapper;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Shaghaf.Core.Entities.BookingEntities;
 using Stripe.Checkout;
 using Shaghaf.API.Helpers;
@@ -19,6 +17,7 @@ namespace Shaghaf.Application.Services
         private readonly IMapper _mapper;
         private readonly StripeSettings _stripeSettings;
 
+        // Constructor to initialize dependencies and set Stripe API key
         public PaymentService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<StripeSettings> stripeSettings)
         {
             _unitOfWork = unitOfWork;
@@ -27,6 +26,7 @@ namespace Shaghaf.Application.Services
             StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
         }
 
+        // Create a Stripe checkout session asynchronously
         public async Task<Session> CreateCheckoutSession(PaymentDto paymentDto)
         {
             var booking = await _unitOfWork.Repository<Booking>().GetByIdAsync(paymentDto.BookingId);
@@ -70,6 +70,7 @@ namespace Shaghaf.Application.Services
             return session;
         }
 
+        // Handle Stripe events for payment status updates asynchronously
         public async Task HandleStripeEvent(string json, string stripeSignature, string webhookSecret)
         {
             var stripeEvent = EventUtility.ConstructEvent(json, stripeSignature, webhookSecret);
@@ -86,6 +87,7 @@ namespace Shaghaf.Application.Services
             }
         }
 
+        // Update payment intent status asynchronously
         public async Task<Booking> UpdatePaymentIntentToSucceedOrFail(string paymentIntentId, bool succeeded)
         {
             var spec = new BookingWithPaymentIntentSpec(paymentIntentId);
@@ -101,6 +103,7 @@ namespace Shaghaf.Application.Services
             return booking;
         }
 
+        // Check payment status for a booking asynchronously
         public async Task<string> CheckPaymentStatusAsync(int bookingId)
         {
             var booking = await _unitOfWork.Repository<Booking>().GetByIdAsync(bookingId);

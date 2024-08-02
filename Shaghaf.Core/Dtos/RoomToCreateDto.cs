@@ -1,11 +1,4 @@
-﻿using Shaghaf.Core.Entities.RoomEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Shaghaf.Core.Dtos
+﻿namespace Shaghaf.Core.Dtos
 {
     public class RoomToCreateDto
     {
@@ -16,11 +9,8 @@ namespace Shaghaf.Core.Dtos
         public string Description { get; set; } = null!;
         public string Location { get; set; } = null!;
         public DateTime Date { get; set; }
-
         public decimal Price { get; set; }
-
         public string Type { get; set; }
-
         public string Plan { get; set; }
     }
 }
