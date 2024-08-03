@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shaghaf.Core.Entities;
+using Shaghaf.Core.Entities.BookingEntities;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Infrastructure.Data;
 using Shaghaf.Infrastructure.Repositories;

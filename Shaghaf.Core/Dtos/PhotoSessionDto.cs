@@ -1,12 +1,15 @@
-﻿namespace Shaghaf.Core.Dtos
+﻿using System;
+
+namespace Shaghaf.Core.Dtos
 {
     public class PhotoSessionDto
     {
-        // remove Title
-
-        //public string Title { get; set; }
+        public int Id { get; set; }
+        public decimal Cost { get; set; }
+        public TimeSpan Duration { get; set; }
         public DateTime Date { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
+        public string Location { get; set; } = null!;
+        public int? RoomId { get; set; }
+        public int? BirthdayId { get; set; }
     }
 }

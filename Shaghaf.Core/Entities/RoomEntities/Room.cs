@@ -1,29 +1,22 @@
-﻿
-
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Shaghaf.Core.Entities.BirthdayEntity;
+using Shaghaf.Core.Entities.HomeEntities;
 
 namespace Shaghaf.Core.Entities.RoomEntities
 {
-    public class Room :BaseEntity
+
+    public class Room : BaseEntity
     {
-        public string Name { get; set; } = null!;
-        public decimal Offer { get; set; }
-        public decimal Rate { get; set; }
-        public int Seat { get; set; }
-        public string Description { get; set; } = null!;
-
-     
-     //   public ICollection<string> Amenities { get; set; }
-
-        public string Location { get; set; } = null!;
-        public DateTime Date { get; set; }
-
-        public decimal Price { get; set; }
-
-        public RoomPlan Plan { get; set; } = RoomPlan.Hour; // default is per hour
-
-
-        public RoomType Type { get; set; } = RoomType.FunnyRoom; // default is funny
-
+        public string Name { get; set; } = null!; // Room name
+        public decimal Offer { get; set; } // Discount offer
+        public decimal Rate { get; set; } // Room rate
+        public int Seat { get; set; } // Number of seats
+        public string Description { get; set; } = null!; // Room description
+        public string Location { get; set; } = null!; // Room location
+        public DateTime Date { get; set; } // Available date
+        public decimal Price { get; set; } // Room price
+        public RoomPlan Plan { get; set; } = RoomPlan.Hour; // Default per hour
+        public RoomType Type { get; set; } = RoomType.FunnyRoom; // Default funny
+        public ICollection<PhotoSession> PhotoSessions { get; set; } = new List<PhotoSession>(); // Photo sessions
+        public ICollection<Birthday> Birthdays { get; set; } = new List<Birthday>(); // Birthdays
     }
 }

@@ -11,7 +11,6 @@ using Shaghaf.Core.Services.Contract;
 using Shaghaf.Infrastructure;
 using Shaghaf.Infrastructure.Data;
 using Shaghaf.Infrastructure.Repositories;
-using Shaghaf.Service;
 using System.Text.Json.Serialization;
 using Stripe;
 using Shaghaf.API.Helpers;
@@ -25,6 +24,8 @@ using Microsoft.AspNetCore.Identity;
 using Shaghaf.Core.Entities.IdentityEntities;
 using Shaghaf.Infrastructure.IdentityData.SeedData;
 using Shaghaf.Infrastructure.Services;
+using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace Shaghaf.API
 {
@@ -40,12 +41,12 @@ namespace Shaghaf.API
             // Add services to the container    .
             #region Configure Services
 
-            // Add services to the container.
+            // Configure JSON serialization options
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve; // Handle circular references
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; // Ignore null values
             });
-
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -65,6 +66,9 @@ namespace Shaghaf.API
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+            builder.Services.AddScoped<IBirthdayService, BirthdayService>();
+            builder.Services.AddScoped<IMembershipService, MembershipService>();
+            builder.Services.AddScoped<IPhotoSessionService, PhotoSessionService>();
             builder.Services.AddScoped<IHomeService, HomeService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
@@ -91,26 +95,48 @@ namespace Shaghaf.API
             // Bind the JWT configuration section from appsettings.json to the JWT settings class
             builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
 
-            // Add JWT Configuration
+            // Configure JWT authentication
             builder.Services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(o =>
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // Set default authentication scheme
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Set default challenge scheme
+            })
+            .AddJwtBearer(options =>
             {
-                o.RequireHttpsMetadata = false;
-                o.SaveToken = false;
-                o.TokenValidationParameters = new TokenValidationParameters
+                // Set token validation parameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                    ValidateIssuer = true, // Validate the issuer
+                    ValidateAudience = true, // Validate the audience
+                    ValidateLifetime = true, // Validate the token lifetime
+                    ValidateIssuerSigningKey = true, // Validate the signing key
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"], // Issuer from configuration
+                    ValidAudience = builder.Configuration["Jwt:Audience"], // Audience from configuration
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])) // Signing key from configuration
                 };
-            });  
+
+                // Configure JWT events
+                options.Events = new JwtBearerEvents
+                {
+                    // Handle authentication failure
+                    OnAuthenticationFailed = context =>
+                    {
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonSerializer.Serialize(new { message = "Authentication failed." });
+                        return context.Response.WriteAsync(result);
+                    },
+                    // Handle challenge
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Response.ContentType = "application/json";
+                        var result = JsonSerializer.Serialize(new { message = "You are not authorized to access this resource." });
+                        return context.Response.WriteAsync(result);
+                    }
+                };
+            });
             #endregion
 
             #endregion
@@ -130,7 +156,7 @@ namespace Shaghaf.API
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred while seeding the database.");
                 }
-            } 
+            }
             #endregion
 
             #region Configure MiddleWares
@@ -140,17 +166,21 @@ namespace Shaghaf.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseMiddleware<CustomAuthenticationMiddleware>(); // Use custom authentication middleware
+
             app.UseStaticFiles();
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
-            app.UseAuthentication();
+            app.UseRouting(); // Use routing
 
-            app.MapControllers();
+            app.UseAuthentication(); // Use authentication
+            app.UseAuthorization(); // Use authorization
 
-            app.Run(); 
+            app.MapControllers(); // Map controllers
+
+            app.Run(); // Run the application
             #endregion
-
         }
     }
 }

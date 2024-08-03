@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Shaghaf.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Shaghaf.Infrastructure.Data;
 namespace Shaghaf.Infrastructure.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240803004349_UpdateRoomEnumConversions")]
+    partial class UpdateRoomEnumConversions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -366,8 +369,10 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.Property<decimal>("Offer")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Plan")
-                        .HasColumnType("int");
+                    b.Property<string>("Plan")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -378,8 +383,10 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.Property<int>("Seat")
                         .HasColumnType("int");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 

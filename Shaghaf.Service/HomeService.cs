@@ -4,6 +4,8 @@ using Shaghaf.Core.Entities.HomeEntities;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Specifications.Home_Specs;
 using Shaghaf.Core.Services.Contract;
+using Shaghaf.Core.Entities.MembershipEntity;
+using Shaghaf.Core.Entities.BirthdayEntity;
 
 namespace Shaghaf.Application.Services
 {
@@ -27,27 +29,27 @@ namespace Shaghaf.Application.Services
             return home;
         }
 
-        // Get memberships 
-        public async Task<List<MembershipDto>> GetMembershipsAsync()
-        {
-            var memberships = await _unitOfWork.Repository<Membership>().GetAllAsync();
-            return _mapper.Map<List<MembershipDto>>(memberships);
-        }
+        //// Get memberships 
+        //public async Task<List<MembershipDto>> GetMembershipsAsync()
+        //{
+        //    var memberships = await _unitOfWork.Repository<Membership>().GetAllAsync();
+        //    return _mapper.Map<List<MembershipDto>>(memberships);
+        //}
 
         // Get birthdays 
-        public async Task<List<BirthdayDto>> GetBirthdaysAsync()
-        {
-            var spec = new BirthdaySpecs();
-            var birthdays = await _unitOfWork.Repository<Birthday>().GetAllWithSpecAsync(spec);
-            return _mapper.Map<List<BirthdayDto>>(birthdays);
-        }
+        //public async Task<List<BirthdayDto>> GetBirthdaysAsync()
+        //{
+        //    var spec = new BirthdaySpecs();
+        //    var birthdays = await _unitOfWork.Repository<Birthday>().GetAllWithSpecAsync(spec);
+        //    return _mapper.Map<List<BirthdayDto>>(birthdays);
+        //}
 
         // Get photo sessions 
-        public async Task<List<PhotoSessionDto>> GetPhotoSessionsAsync()
-        {
-            var photoSessions = await _unitOfWork.Repository<PhotoSession>().GetAllAsync();
-            return _mapper.Map<List<PhotoSessionDto>>(photoSessions);
-        }
+        //public async Task<List<PhotoSessionDto>> GetPhotoSessionsAsync()
+        //{
+        //    var photoSessions = await _unitOfWork.Repository<PhotoSession>().GetAllAsync();
+        //    return _mapper.Map<List<PhotoSessionDto>>(photoSessions);
+        //}
 
         // Get advertisements 
         public async Task<List<AdvertisementDto>> GetAdvertisementsAsync()

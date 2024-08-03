@@ -1,56 +1,59 @@
 ﻿using AutoMapper;
-using Shaghaf.Core;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities.RoomEntities;
 using Shaghaf.Core.Services.Contract;
+using Shaghaf.Core;
+using Shaghaf.Core.Specifications;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-
-
-namespace Shaghaf.Service
+public class RoomService : IRoomService
 {
-    public class RoomService : IRoomService
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IMapper _mapper;
+
+    public RoomService(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+    }
 
-        // Constructor to initialize dependencies
-        public RoomService(IUnitOfWork unitOfWork, IMapper mapper)
+    public async Task<RoomDto> CreateRoomAsync(RoomToCreateDto roomDto)
+    {
+        var room = _mapper.Map<Room>(roomDto);
+        _unitOfWork.Repository<Room>().Add(room);
+        await _unitOfWork.CompleteAsync();
+        return _mapper.Map<RoomDto>(room);
+    }
+
+    public async Task UpdateRoomAsync(RoomDto roomDto)
+    {
+        var room = await _unitOfWork.Repository<Room>().GetByIdAsync(roomDto.Id);
+        if (room == null)
         {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            throw new KeyNotFoundException("No room found matching the specified criteria.");
         }
 
-        // Create a new room asynchronously
-        public async Task<Room?> CreateRoomAsync(RoomToCreateDto model)
-        {
-            var roomRepo = _unitOfWork.Repository<Room>();
-            var room = _mapper.Map<Room>(model);
+        _mapper.Map(roomDto, room);
+        _unitOfWork.Repository<Room>().Update(room);
+        await _unitOfWork.CompleteAsync();
+    }
 
-            roomRepo.Add(room);
-            var result = await _unitOfWork.CompleteAsync();
-            if (result <= 0) return null;
+    public async Task<RoomDto?> GetRoomByIdAsync(int id)
+    {
+        var room = await _unitOfWork.Repository<Room>().GetByIdAsync(id);
+        return room == null ? null : _mapper.Map<RoomDto>(room);
+    }
 
-            return room;
-        }
+    public async Task<IReadOnlyList<RoomDto>> GetAllRoomsAsync()
+    {
+        var rooms = await _unitOfWork.Repository<Room>().GetAllAsync();
+        return _mapper.Map<IReadOnlyList<RoomDto>>(rooms);
+    }
 
-        // Get all rooms 
-        public async Task<IReadOnlyList<Room>> GetAllRooms()
-        {
-            var roomRepo = _unitOfWork.Repository<Room>();
-            var rooms = await roomRepo.GetAllAsync();
-            var roomslist = rooms.ToList();
-            return roomslist;
-        }
-
-        // Get room details by ID 
-        public async Task<Room?> GetRoomById(int roomId)
-        {
-            var roomRepo = _unitOfWork.Repository<Room>();
-            var room = await roomRepo.GetByIdAsync(roomId);
-
-            if (room is null)
-                return null;
-            return room;
-        }
+    public async Task<IReadOnlyList<RoomDto>> GetRoomsWithSpecAsync(ISpecifications<Room> spec)
+    {
+        var rooms = await _unitOfWork.Repository<Room>().GetAllWithSpecAsync(spec);
+        return _mapper.Map<IReadOnlyList<RoomDto>>(rooms);
     }
 }

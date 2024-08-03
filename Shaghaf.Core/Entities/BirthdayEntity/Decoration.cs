@@ -1,6 +1,8 @@
-﻿namespace Shaghaf.Core.Entities.HomeEntities
+﻿using Shaghaf.Core.Entities.HomeEntities;
+
+namespace Shaghaf.Core.Entities.BirthdayEntity
 {
-    public class Decoration:BaseEntity
+    public class Decoration : BaseEntity
     {
 
         public string Description { get; set; }  // e.g., "2 helium balloons, a happy birthday ribbon, and two balloons"

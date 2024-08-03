@@ -35,32 +35,32 @@ namespace Shaghaf.API.Controllers
         }
 
         // Endpoint to get memberships
-        [HttpGet("memberships")]
-        public async Task<ActionResult<List<MembershipDto>>> GetMemberships()
-        {
-            // Retrieve memberships
-            var memberships = await _homeService.GetMembershipsAsync();
-            return Ok(memberships);
-        }
+        //[HttpGet("memberships")]
+        //public async Task<ActionResult<List<MembershipDto>>> GetMemberships()
+        //{
+        //    // Retrieve memberships
+        //    var memberships = await _homeService.GetMembershipsAsync();
+        //    return Ok(memberships);
+        //}
 
         // Endpoint to get birthdays
-        [HttpGet("birthdays")]
-        public async Task<ActionResult<List<BirthdayDto>>> GetBirthdays()
-        {
-            // Retrieve birthdays 
-            var birthdays = await _homeService.GetBirthdaysAsync();
+        //[HttpGet("birthdays")]
+        //public async Task<ActionResult<List<BirthdayDto>>> GetBirthdays()
+        //{
+        //    // Retrieve birthdays 
+        //    var birthdays = await _homeService.GetBirthdaysAsync();
            
-            return Ok(birthdays);
-        }
+        //    return Ok(birthdays);
+        //}
 
         // Endpoint to get photo sessions
-        [HttpGet("photosessions")]
-        public async Task<ActionResult<List<PhotoSessionDto>>> GetPhotoSessions()
-        {
-            // Retrieve photo sessions asynchronously using the home service
-            var photoSessions = await _homeService.GetPhotoSessionsAsync();
-            return Ok(photoSessions);
-        }
+        //[HttpGet("photosessions")]
+        //public async Task<ActionResult<List<PhotoSessionDto>>> GetPhotoSessions()
+        //{
+        //    // Retrieve photo sessions asynchronously using the home service
+        //    var photoSessions = await _homeService.GetPhotoSessionsAsync();
+        //    return Ok(photoSessions);
+        //}
 
         // Endpoint to get advertisements
         [HttpGet("advertisements")]

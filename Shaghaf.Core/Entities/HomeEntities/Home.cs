@@ -12,9 +12,9 @@ namespace Shaghaf.Core.Entities.HomeEntities
         public Location Location { get; set; }
         public string Heading { get; set; }
         public ICollection<Advertisement> Advertisements { get; set; }
-        public ICollection<Membership> Memberships { get; set; }
-        public ICollection<Birthday> Birthdays { get; set; }
-        public ICollection<PhotoSession> PhotoSessions { get; set; }
+        //public ICollection<Membership> Memberships { get; set; }
+        //public ICollection<Birthday> Birthdays { get; set; }
+      //  public ICollection<PhotoSession> PhotoSessions { get; set; }
         public ICollection<Category> Categories { get; set; }
       
     }

@@ -38,16 +38,15 @@ namespace Shaghaf.Infrastructure.Repositories
         {
             if (typeof(T) == typeof(Home))
             {
-                return (IReadOnlyList<T>)await _context.Set<Home>().Include(H => H.PhotoSessions)
-                .Include(H => H.Categories)
-                .Include(H => H.Advertisements)
-                .Include(H => H.Memberships)
-                .Include(H => H.Location)
-                .Include(P => P.Birthdays).ThenInclude(P => P.Cakes)
-                .Include(P => P.Birthdays).ThenInclude(P => P.Decorations).ToListAsync();
+                return (IReadOnlyList<T>)await _context.Set<Home>()
+                    .Include(H => H.Categories)
+                    .Include(H => H.Advertisements)
+                    .Include(H => H.Location)
+                    .ToListAsync();
             }
             return await ApplySpecification(spec).ToListAsync();
         }
+
 
         public async Task<T?> GetEntityWithSpecAsync(ISpecifications<T> spec)
         {

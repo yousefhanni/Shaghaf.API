@@ -5,10 +5,20 @@ namespace Shaghaf.Core.Entities.RoomEntities
     public enum RoomType
     {
         [EnumMember(Value = "TrainingRoom")]
-        TrainingRoom,
+        TrainingRoom, // Training sessions
         [EnumMember(Value = "FunnyRoom")]
-        FunnyRoom,
+        FunnyRoom, // Entertainment
         [EnumMember(Value = "MeetingRoom")]
-        MeetingRoom
+        MeetingRoom, // Meetings
+        [EnumMember(Value = "EventRoom")]
+        EventRoom, // Events
+        [EnumMember(Value = "BirthdayRoom")]
+        BirthdayRoom, // Birthday parties
+        [EnumMember(Value = "WorkSpace")]
+        WorkSpace, // Shared workspace
+        [EnumMember(Value = "GameRoom")]
+        GameRoom, // Gaming
+        [EnumMember(Value = "ConferenceRoom")]
+        ConferenceRoom // Conferences
     }
 }

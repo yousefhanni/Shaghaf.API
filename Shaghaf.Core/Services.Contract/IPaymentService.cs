@@ -1,5 +1,6 @@
 ﻿using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities;
+using Shaghaf.Core.Entities.BookingEntities;
 using Stripe.Checkout;
 using System.Threading.Tasks;
 

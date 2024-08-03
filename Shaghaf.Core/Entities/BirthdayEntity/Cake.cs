@@ -1,8 +1,9 @@
-﻿namespace Shaghaf.Core.Entities.HomeEntities
+﻿using Shaghaf.Core.Entities.HomeEntities;
+
+namespace Shaghaf.Core.Entities.BirthdayEntity
 {
-    public class Cake:BaseEntity
+    public class Cake : BaseEntity
     {
-        
 
         public string Name { get; set; }
         public decimal Price { get; set; }

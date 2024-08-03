@@ -1,4 +1,5 @@
 ﻿using Shaghaf.Core.Entities;
+using Shaghaf.Core.Entities.BookingEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

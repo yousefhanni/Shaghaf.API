@@ -1,18 +1,12 @@
 ﻿using Shaghaf.Core.Dtos;
-using Shaghaf.Core.Entities.RoomEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shaghaf.Core.Services.Contract
 {
     public interface IRoomService
     {
-        Task<Room?> CreateRoomAsync(RoomToCreateDto model);
-        Task<IReadOnlyList<Room>> GetAllRooms();
-        Task<Room?> GetRoomById(int roomId);
+        Task<RoomDto> CreateRoomAsync(RoomToCreateDto roomDto);
+        Task UpdateRoomAsync(RoomDto roomDto);
+        Task<RoomDto?> GetRoomByIdAsync(int id);
+        Task<IReadOnlyList<RoomDto>> GetAllRoomsAsync();
     }
 }
