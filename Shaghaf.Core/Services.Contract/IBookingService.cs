@@ -1,17 +1,14 @@
-﻿using Shaghaf.Core.Dtos;
-using Shaghaf.Core.Entities;
-using Shaghaf.Core.Entities.BookingEntities;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Shaghaf.Core.Dtos;
 
 namespace Shaghaf.Core.Services.Contract
 {
     public interface IBookingService
     {
-        Task<BookingDto> CreateBookingAsync(BookingDto bookingDto);
-        Task UpdateBookingAsync(BookingDto bookingDto); // Add this line
-
+        Task<BookingDto> CreateBookingAsync(BookingToCreateDto bookingToCreateDto);
+        Task UpdateBookingAsync(BookingDto bookingDto);
         Task<BookingDto?> GetBookingDetailsAsync(int bookingId);
         Task<IReadOnlyList<BookingDto>> GetAllBookingDetailsAsync();
-        //Task<AdditionalItemDto?> AddAdditionalItemAsync(AdditionalItemDto additionalItemDto);
     }
 }

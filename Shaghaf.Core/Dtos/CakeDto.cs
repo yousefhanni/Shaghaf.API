@@ -1,8 +1,6 @@
-﻿namespace Shaghaf.Core.Dtos
+﻿public class CakeDto
 {
-    public class CakeDto
-    {
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-    }
+    public string Name { get; set; } = null!;
+    public decimal Price { get; set; }
+    public string ServingSize { get; set; } = null!; // تأكد من عدم السماح بقيم NULL
 }

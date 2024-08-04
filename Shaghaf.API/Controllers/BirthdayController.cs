@@ -2,7 +2,6 @@
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Services.Contract;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -16,9 +15,9 @@ public class BirthdayController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateBirthday([FromBody] BirthdayDto birthdayDto)
+    public async Task<IActionResult> CreateBirthday([FromBody] BirthdayToCreateDto birthdayToCreateDto)
     {
-        var result = await _birthdayService.CreateBirthdayAsync(birthdayDto);
+        var result = await _birthdayService.CreateBirthdayAsync(birthdayToCreateDto);
         return Ok(result);
     }
 

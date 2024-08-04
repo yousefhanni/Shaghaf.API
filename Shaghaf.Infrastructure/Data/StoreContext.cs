@@ -6,17 +6,27 @@ using Shaghaf.Core.Entities.HomeEntities;
 using Shaghaf.Core.Entities.MembershipEntity;
 using Shaghaf.Core.Entities.RoomEntities;
 using System.Reflection;
+
 namespace Shaghaf.Infrastructure.Data
 {
     public class StoreContext : DbContext
     {
-
         public StoreContext(DbContextOptions<StoreContext> options) : base(options)
         {
-
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            // Configure the enum to be stored as string
+            // Configure the enum to be stored as string
+            modelBuilder.Entity<Booking>()
+                .Property(b => b.Status)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (BookingStatus)Enum.Parse(typeof(BookingStatus), v)
+                );
+
             // Configure the relationship between Cake and Birthday
             modelBuilder.Entity<Cake>()
                 .HasOne(c => c.Birthday)
@@ -31,12 +41,7 @@ namespace Shaghaf.Infrastructure.Data
                 .HasForeignKey(d => d.BirthdayId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Configure the relationship between PhotoSession and Birthday
-            modelBuilder.Entity<PhotoSession>()
-                .HasOne(p => p.Birthday)
-                .WithMany(b => b.PhotoSessions)
-                .HasForeignKey(p => p.BirthdayId);
-
+            // Remove the relationship configuration between PhotoSession and Birthday
             // Configure the relationship between PhotoSession and Room
             modelBuilder.Entity<PhotoSession>()
                 .HasOne(p => p.Room)
@@ -48,23 +53,8 @@ namespace Shaghaf.Infrastructure.Data
                 .HasOne(b => b.Room)
                 .WithMany(r => r.Birthdays)
                 .HasForeignKey(b => b.RoomId);
-
-            //// Configure enum to string conversion for RoomPlan
-            //modelBuilder.Entity<Room>()
-            //    .Property(r => r.Plan)
-            //    .HasConversion(
-            //        v => v.ToString(),
-            //        v => (RoomPlan)Enum.Parse(typeof(RoomPlan), v))
-            //    .HasMaxLength(50); // Optional: set max length if needed
-
-            //// Configure enum to string conversion for RoomType
-            //modelBuilder.Entity<Room>()
-            //    .Property(r => r.Type)
-            //    .HasConversion(
-            //        v => v.ToString(),
-            //        v => (RoomType)Enum.Parse(typeof(RoomType), v))
-            //    .HasMaxLength(50); // Optional: set max length if needed
         }
+
         public DbSet<Home> Homes { get; set; }
         public DbSet<Advertisement> Advertisements { get; set; }
         public DbSet<Category> Categories { get; set; }
@@ -76,6 +66,6 @@ namespace Shaghaf.Infrastructure.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-      //  public DbSet<AdditionalItem> AdditionalItems { get; set; }
+        //  public DbSet<AdditionalItem> AdditionalItems { get; set; }
     }
 }

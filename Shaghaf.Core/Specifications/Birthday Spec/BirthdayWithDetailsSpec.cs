@@ -10,7 +10,7 @@ public class BirthdayWithDetailsSpec : BaseSpecifications<Birthday>
     {
         Includes.Add(B => B.Cakes);
         Includes.Add(B => B.Decorations);
-        Includes.Add(B => B.PhotoSessions);
+      //  Includes.Add(B => B.PhotoSessions);
 
     }
 
@@ -19,7 +19,7 @@ public class BirthdayWithDetailsSpec : BaseSpecifications<Birthday>
         Includes.Add(B => B.Cakes);
 
         Includes.Add(B => B.Decorations);
-        Includes.Add(B => B.PhotoSessions);
+       // Includes.Add(B => B.PhotoSessions);
 
     }
 }

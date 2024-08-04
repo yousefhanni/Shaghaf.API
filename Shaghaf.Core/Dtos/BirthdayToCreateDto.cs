@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Shaghaf.Core.Dtos
 {
-    public class BirthdayDto
+    public class BirthdayToCreateDto
     {
-        public int Id { get; set; }
         public string UserName { get; set; } = null!;
         public DateTime Date { get; set; }
         public int NumberOfGuests { get; set; }

@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
+using Shaghaf.Core;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities;
+using Shaghaf.Core.Entities.MembershipEntity;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Core.Services.Contract;
-using Shaghaf.Core;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Shaghaf.Core.Entities.MembershipEntity;
 
 public class MembershipService : IMembershipService
 {
@@ -20,7 +20,7 @@ public class MembershipService : IMembershipService
         _mapper = mapper;
     }
 
-    public async Task<MembershipDto> CreateMembershipAsync(MembershipDto membershipDto)
+    public async Task<MembershipDto> CreateMembershipAsync(MembershipToCreateDto membershipDto)
     {
         var membership = _mapper.Map<Membership>(membershipDto);
         _unitOfWork.Repository<Membership>().Add(membership);

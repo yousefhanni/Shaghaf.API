@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Shaghaf.Core.Dtos
 {
-    public class PhotoSessionDto
+    public class PhotoSessionToCreateDto
     {
-        public int Id { get; set; }
         public decimal Cost { get; set; }
         public TimeSpan Duration { get; set; }
         public DateTime Date { get; set; }

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Services.Contract;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -16,8 +14,13 @@ public class PhotoSessionController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePhotoSession([FromBody] PhotoSessionDto photoSessionDto)
+    public async Task<IActionResult> CreatePhotoSession([FromBody] PhotoSessionToCreateDto photoSessionDto)
     {
+        if (photoSessionDto == null)
+        {
+            return BadRequest("Invalid data.");
+        }
+
         var result = await _photoSessionService.CreatePhotoSessionAsync(photoSessionDto);
         return Ok(result);
     }
@@ -25,6 +28,11 @@ public class PhotoSessionController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdatePhotoSession(int id, [FromBody] PhotoSessionDto photoSessionDto)
     {
+        if (photoSessionDto == null)
+        {
+            return BadRequest("Invalid data.");
+        }
+
         photoSessionDto.Id = id;
         await _photoSessionService.UpdatePhotoSessionAsync(photoSessionDto);
         return NoContent();

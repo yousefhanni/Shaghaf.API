@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
+using Shaghaf.Core;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities.BirthdayEntity;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Core.Services.Contract;
-using Shaghaf.Core;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,9 +18,9 @@ public class BirthdayService : IBirthdayService
         _mapper = mapper;
     }
 
-    public async Task<BirthdayDto> CreateBirthdayAsync(BirthdayDto birthdayDto)
+    public async Task<BirthdayDto> CreateBirthdayAsync(BirthdayToCreateDto birthdayToCreateDto)
     {
-        var birthday = _mapper.Map<Birthday>(birthdayDto);
+        var birthday = _mapper.Map<Birthday>(birthdayToCreateDto);
         _unitOfWork.Repository<Birthday>().Add(birthday);
         await _unitOfWork.CompleteAsync();
         return _mapper.Map<BirthdayDto>(birthday);

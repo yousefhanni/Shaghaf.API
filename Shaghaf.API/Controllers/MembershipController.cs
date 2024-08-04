@@ -16,7 +16,7 @@ public class MembershipController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateMembership([FromBody] MembershipDto membershipDto)
+    public async Task<IActionResult> CreateMembership([FromBody] MembershipToCreateDto membershipDto)
     {
         var result = await _membershipService.CreateMembershipAsync(membershipDto);
         return Ok(result);

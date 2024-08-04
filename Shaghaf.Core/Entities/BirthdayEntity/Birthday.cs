@@ -10,7 +10,7 @@ namespace Shaghaf.Core.Entities.BirthdayEntity
         public int NumberOfGuests { get; set; } // Number of guests
         public ICollection<Cake> Cakes { get; set; } = new List<Cake>(); // List of cakes
         public ICollection<Decoration> Decorations { get; set; } = new List<Decoration>(); // List of decorations
-        public ICollection<PhotoSession> PhotoSessions { get; set; } = new List<PhotoSession>(); // List of photo sessions
+      //  public ICollection<PhotoSession> PhotoSessions { get; set; } = new List<PhotoSession>(); // List of photo sessions
         public int RoomId { get; set; } // ID of the associated room
         public Room Room { get; set; } = null!; // Associated room
     }

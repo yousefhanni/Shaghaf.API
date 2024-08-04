@@ -11,7 +11,6 @@ namespace Shaghaf.Core.Entities.BirthdayEntity
         public string Location { get; set; } = null!; // Location of the session (indoor or outdoor)
         public int? RoomId { get; set; } // ID of the associated Room (if indoor)
         public Room? Room { get; set; } // Associated Room (if indoor session)
-        public int? BirthdayId { get; set; } // ID of the associated Birthday event
-        public Birthday? Birthday { get; set; } // Associated Birthday event
+    
     }
 }

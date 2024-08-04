@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
 using Shaghaf.Core.Dtos;
-using Shaghaf.Core.Entities;
-using Shaghaf.Core.Repositories.Contract;
+using Shaghaf.Core.Entities.BirthdayEntity;
 using Shaghaf.Core.Services.Contract;
 using Shaghaf.Core;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Shaghaf.Core.Entities.BirthdayEntity;
 
 public class PhotoSessionService : IPhotoSessionService
 {
@@ -20,7 +15,7 @@ public class PhotoSessionService : IPhotoSessionService
         _mapper = mapper;
     }
 
-    public async Task<PhotoSessionDto> CreatePhotoSessionAsync(PhotoSessionDto photoSessionDto)
+    public async Task<PhotoSessionDto> CreatePhotoSessionAsync(PhotoSessionToCreateDto photoSessionDto)
     {
         var photoSession = _mapper.Map<PhotoSession>(photoSessionDto);
         _unitOfWork.Repository<PhotoSession>().Add(photoSession);
