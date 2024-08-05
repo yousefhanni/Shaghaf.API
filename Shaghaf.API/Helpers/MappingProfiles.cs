@@ -7,6 +7,7 @@ using Shaghaf.Core.Entities.MembershipEntity;
 using Shaghaf.Core.Entities.RoomEntities;
 using Shaghaf.API.Helpers;
 using Shaghaf.Core.Dtos.Shaghaf.Core.DTOs;
+using Shaghaf.Core.Entities;
 
 namespace Shaghaf.Application.Mappings
 {
@@ -63,6 +64,11 @@ namespace Shaghaf.Application.Mappings
             // Membership mappings
             CreateMap<Membership, MembershipDto>().ReverseMap();
             CreateMap<MembershipToCreateDto, Membership>();
+
+            //MenuItem mappings 
+            CreateMap<MenuItemToCreateDto, MenuItem>()
+                  .ForMember(dest => dest.PictureUrl, opt => opt.Ignore());
+            CreateMap<MenuItem, MenuItemDto>();
         }
     }
 }

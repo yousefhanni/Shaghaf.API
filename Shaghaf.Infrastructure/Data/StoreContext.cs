@@ -66,6 +66,9 @@ namespace Shaghaf.Infrastructure.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-        //  public DbSet<AdditionalItem> AdditionalItems { get; set; }
+
+        // Add new DbSets for MenuItem, CartItem, and Order
+
+        public DbSet<MenuItem> MenuItems { get; set; }
     }
 }

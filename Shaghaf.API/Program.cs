@@ -71,6 +71,7 @@ namespace Shaghaf.API
             builder.Services.AddScoped<IPhotoSessionService, PhotoSessionService>();
             builder.Services.AddScoped<IHomeService, HomeService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 

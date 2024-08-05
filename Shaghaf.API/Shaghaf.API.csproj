@@ -31,4 +31,8 @@
     <ProjectReference Include="..\Shaghaf.Service\Shaghaf.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\menuitems\" />
+  </ItemGroup>
+
 </Project>
