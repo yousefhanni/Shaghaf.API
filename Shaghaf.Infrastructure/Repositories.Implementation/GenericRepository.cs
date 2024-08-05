@@ -8,7 +8,7 @@ using Shaghaf.Core.Entities;
 using Shaghaf.Core.Specifications;
 using Shaghaf.Core.Entities.HomeEntities;
 
-namespace Shaghaf.Infrastructure.Repositories
+namespace Shaghaf.Infrastructure.Repositories.Implementation
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {

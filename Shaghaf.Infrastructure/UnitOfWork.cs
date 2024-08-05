@@ -3,6 +3,7 @@ using Shaghaf.Core.Entities;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Infrastructure.Data;
 using Shaghaf.Infrastructure.Repositories;
+using Shaghaf.Infrastructure.Repositories.Implementation;
 using System;
 using System.Collections;
 using System.Collections.Generic;

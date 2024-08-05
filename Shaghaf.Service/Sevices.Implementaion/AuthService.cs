@@ -7,8 +7,9 @@ using System.Text;
 using Shaghaf.Core.Entities.IdentityEntities;
 using Shaghaf.API.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Shaghaf.Infrastructure.Services;
 
-namespace Shaghaf.Infrastructure.Services
+namespace Shaghaf.Service.Sevices.Implementaion
 {
     public class AuthService : IAuthService
     {
@@ -40,7 +41,7 @@ namespace Shaghaf.Infrastructure.Services
                 UserName = model.Username,
                 PhoneNumber = model.PhoneNumber
             };
-            
+
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
@@ -51,7 +52,7 @@ namespace Shaghaf.Infrastructure.Services
 
             // Assign the user to "User" role
             await _userManager.AddToRoleAsync(user, "User");
-                
+
             // Generate JWT token
             var jwtSecurityToken = await CreateJwtToken(user);
 

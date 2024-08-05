@@ -20,6 +20,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.12" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.0" />
     <PackageReference Include="Stripe.net" Version="45.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.7.1" />
   </ItemGroup>

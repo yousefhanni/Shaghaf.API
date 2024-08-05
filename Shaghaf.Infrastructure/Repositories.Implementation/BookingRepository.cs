@@ -3,14 +3,13 @@ using Shaghaf.Core.Entities;
 using Shaghaf.Core.Entities.BookingEntities;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Infrastructure.Data;
-using Shaghaf.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shaghaf.Infrastructure.Sevices.Implementaion
+namespace Shaghaf.Infrastructure.Repositories.Implementation
 {
     public class BookingRepository : GenericRepository<Booking>, IBookingRepository
     {

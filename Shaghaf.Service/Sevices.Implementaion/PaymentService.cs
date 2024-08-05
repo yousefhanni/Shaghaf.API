@@ -9,7 +9,7 @@ using Stripe.Checkout;
 using Shaghaf.API.Helpers;
 using Shaghaf.Core;
 
-namespace Shaghaf.Application.Services
+namespace Shaghaf.Service.Sevices.Implementaion
 {
     public class PaymentService : IPaymentService
     {
@@ -103,11 +103,11 @@ namespace Shaghaf.Application.Services
             return booking;
         }
 
-       /// Polling Service instead of Webhook :
-       /// This service periodically checks the payment status of a booking by querying the payment provider's API.
-       /// It retrieves the booking details from the database, uses the session ID to fetch the payment status from the SessionService,
-       /// and updates the booking status in the database based on the payment status. This approach is used as an alternative
-       /// to real-time notifications (webhooks) from the payment provider, providing a way to manually or periodically confirm payment status.
+        /// Polling Service instead of Webhook :
+        /// This service periodically checks the payment status of a booking by querying the payment provider's API.
+        /// It retrieves the booking details from the database, uses the session ID to fetch the payment status from the SessionService,
+        /// and updates the booking status in the database based on the payment status. This approach is used as an alternative
+        /// to real-time notifications (webhooks) from the payment provider, providing a way to manually or periodically confirm payment status.
         public async Task<string> CheckPaymentStatusAsync(int bookingId)
         {
             // Retrieve the booking details using the booking ID

@@ -1,21 +1,13 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Shaghaf.Application.Mappings;
-using Shaghaf.Application.Services;
 using Shaghaf.Core;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Core.Services.Contract;
 using Shaghaf.Infrastructure;
 using Shaghaf.Infrastructure.Data;
-using Shaghaf.Infrastructure.Repositories;
 using System.Text.Json.Serialization;
 using Stripe;
 using Shaghaf.API.Helpers;
-using Shaghaf.Infrastructure.Sevices.Implementaion;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -24,8 +16,10 @@ using Microsoft.AspNetCore.Identity;
 using Shaghaf.Core.Entities.IdentityEntities;
 using Shaghaf.Infrastructure.IdentityData.SeedData;
 using Shaghaf.Infrastructure.Services;
-using Microsoft.Extensions.Options;
 using System.Text.Json;
+using Shaghaf.Service.Sevices.Implementaion;
+using Shaghaf.Infrastructure.Repositories.Implementation;
+using StackExchange.Redis;
 
 namespace Shaghaf.API
 {
@@ -57,7 +51,15 @@ namespace Shaghaf.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
-            // Add DbContext for AppIdentity with SQL Server configuration
+                    //Allow (DI) to Redis DB
+                    //why AddSingleton ? to 1.once connection opened remains present 2. To caching 
+                    builder.Services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
+                    {
+                        var connection = builder.Configuration.GetConnectionString("Redis");
+                        return ConnectionMultiplexer.Connect(connection);
+                    });
+
+            // Add DbContext for AppIdentity with SQL Server configuration          
             builder.Services.AddDbContext<AppIdentityDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")));
 
@@ -72,11 +74,13 @@ namespace Shaghaf.API
             builder.Services.AddScoped<IHomeService, HomeService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IMenuItemService, MenuItemService>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
 
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             //DI to AuthService
             builder.Services.AddScoped<IAuthService, AuthService>();
+
 
             #region Stripe configurations
             // Add Stripe configuration settings
@@ -169,6 +173,7 @@ namespace Shaghaf.API
             }
 
             app.UseMiddleware<CustomAuthenticationMiddleware>(); // Use custom authentication middleware
+            app.UseStatusCodePagesWithReExecute("/errors/{0}"); //0 =>code,Redirect to Specific Endpoint
 
             app.UseStaticFiles();
             app.UseHttpsRedirection();

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shaghaf.Application.Services;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities.HomeEntities;
 using Shaghaf.Core.Repositories.Contract;

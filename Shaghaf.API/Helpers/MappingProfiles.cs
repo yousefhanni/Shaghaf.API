@@ -8,6 +8,7 @@ using Shaghaf.Core.Entities.RoomEntities;
 using Shaghaf.API.Helpers;
 using Shaghaf.Core.Dtos.Shaghaf.Core.DTOs;
 using Shaghaf.Core.Entities;
+using Shaghaf.Core.Entities.Cart_Entities;
 
 namespace Shaghaf.Application.Mappings
 {
@@ -69,6 +70,10 @@ namespace Shaghaf.Application.Mappings
             CreateMap<MenuItemToCreateDto, MenuItem>()
                   .ForMember(dest => dest.PictureUrl, opt => opt.Ignore());
             CreateMap<MenuItem, MenuItemDto>();
+
+            // CustomerCart and CartItem mappings
+            CreateMap<CartItemDto, CartItem>().ReverseMap();
+            CreateMap<CustomerCartDto, CustomerCart>().ReverseMap();
         }
     }
 }

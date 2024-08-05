@@ -7,7 +7,7 @@ using Shaghaf.Core.Services.Contract;
 using Shaghaf.Core.Entities.MembershipEntity;
 using Shaghaf.Core.Entities.BirthdayEntity;
 
-namespace Shaghaf.Application.Services
+namespace Shaghaf.Service.Sevices.Implementaion
 {
     public class HomeService : IHomeService
     {
