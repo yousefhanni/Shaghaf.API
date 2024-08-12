@@ -1,16 +1,10 @@
-﻿using Shaghaf.Core.Entities;
-using Shaghaf.Core.Entities.BookingEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shaghaf.Core.Entities.BookingEntities;
 
 namespace Shaghaf.Core.Repositories.Contract
 {
     public interface IBookingRepository : IGenericRepository<Booking>
     {
-        Task<Booking> FindUniqueBookingAsync(int roomId, DateTime startDate, DateTime endDate, string customerName);
+        Task<Booking?> FindUniqueBookingAsync(int roomId, DateTime startDate, DateTime endDate, string customerName);
+        Task<bool> UpdatePaymentStatusAsync(int bookingId, bool paymentStatus); // Update booking payment status
     }
-
 }

@@ -21,7 +21,7 @@ public class BirthdayService : IBirthdayService
     public async Task<BirthdayDto> CreateBirthdayAsync(BirthdayToCreateDto birthdayToCreateDto)
     {
         var birthday = _mapper.Map<Birthday>(birthdayToCreateDto);
-        _unitOfWork.Repository<Birthday>().Add(birthday);
+        _unitOfWork.Repository<Birthday>().AddAsync(birthday);
         await _unitOfWork.CompleteAsync();
         return _mapper.Map<BirthdayDto>(birthday);
     }

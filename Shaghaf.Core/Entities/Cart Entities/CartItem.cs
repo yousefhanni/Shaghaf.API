@@ -3,8 +3,8 @@
     // Class representing an item in the shopping cart
     public class CartItem
     {
-        // ID of the menu item 
-        public int  Id { get; set; }
+        // ID of the item
+        public int Id { get; set; }
 
         public string Name { get; set; }
 

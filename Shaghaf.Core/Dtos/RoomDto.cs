@@ -27,8 +27,11 @@ namespace Shaghaf.Core.Dtos
         public string Location { get; set; } = null!;
        
         public DateTime Date { get; set; }
-       
 
         public decimal Price { get; set; }
+
+        public ICollection<int> MembershipIds { get; set; } = new List<int>(); // List of Membership IDs
+
+
     }
 }

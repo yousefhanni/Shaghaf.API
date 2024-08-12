@@ -22,6 +22,21 @@ namespace Shaghaf.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("MembershipRoom", b =>
+                {
+                    b.Property<int>("MembershipId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MembershipId", "RoomId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("MembershipRoom");
+                });
+
             modelBuilder.Entity("Shaghaf.Core.Entities.BirthdayEntity.Birthday", b =>
                 {
                     b.Property<int>("Id")
@@ -162,6 +177,13 @@ namespace Shaghaf.Infrastructure.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentIntentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PaymentStatus")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("PhotoSessionId")
                         .HasColumnType("int");
@@ -365,6 +387,81 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.ToTable("MenuItems");
                 });
 
+            modelBuilder.Entity("Shaghaf.Core.Entities.OrderEntities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CartId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("OrderDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("PaymentIntentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PaymentStatus")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Shaghaf.Core.Entities.OrderEntities.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
+                });
+
             modelBuilder.Entity("Shaghaf.Core.Entities.RoomEntities.Room", b =>
                 {
                     b.Property<int>("Id")
@@ -384,9 +481,6 @@ namespace Shaghaf.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("MembershipId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -394,8 +488,9 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.Property<decimal>("Offer")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("Plan")
-                        .HasColumnType("int");
+                    b.Property<string>("Plan")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -406,14 +501,28 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.Property<int>("Seat")
                         .HasColumnType("int");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MembershipId");
-
                     b.ToTable("Rooms");
+                });
+
+            modelBuilder.Entity("MembershipRoom", b =>
+                {
+                    b.HasOne("Shaghaf.Core.Entities.MembershipEntity.Membership", null)
+                        .WithMany()
+                        .HasForeignKey("MembershipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Shaghaf.Core.Entities.RoomEntities.Room", null)
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Shaghaf.Core.Entities.BirthdayEntity.Birthday", b =>
@@ -514,11 +623,52 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.Navigation("Location");
                 });
 
-            modelBuilder.Entity("Shaghaf.Core.Entities.RoomEntities.Room", b =>
+            modelBuilder.Entity("Shaghaf.Core.Entities.OrderEntities.Order", b =>
                 {
-                    b.HasOne("Shaghaf.Core.Entities.MembershipEntity.Membership", null)
-                        .WithMany("Rooms")
-                        .HasForeignKey("MembershipId");
+                    b.HasOne("Shaghaf.Core.Entities.BookingEntities.Booking", "Booking")
+                        .WithMany("Orders")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Booking");
+                });
+
+            modelBuilder.Entity("Shaghaf.Core.Entities.OrderEntities.OrderItem", b =>
+                {
+                    b.HasOne("Shaghaf.Core.Entities.OrderEntities.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Shaghaf.Core.Entities.OrderEntities.MenuItemOrdered", "MenuItem", b1 =>
+                        {
+                            b1.Property<int>("OrderItemId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("MenuItemId")
+                                .HasColumnType("int");
+
+                            b1.Property<string>("MenuItemName")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PictureUrl")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("OrderItemId");
+
+                            b1.ToTable("OrderItems");
+
+                            b1.WithOwner()
+                                .HasForeignKey("OrderItemId");
+                        });
+
+                    b.Navigation("MenuItem")
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Shaghaf.Core.Entities.BirthdayEntity.Birthday", b =>
@@ -528,6 +678,11 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.Navigation("Decorations");
                 });
 
+            modelBuilder.Entity("Shaghaf.Core.Entities.BookingEntities.Booking", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Home", b =>
                 {
                     b.Navigation("Advertisements");
@@ -535,9 +690,9 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.Navigation("Categories");
                 });
 
-            modelBuilder.Entity("Shaghaf.Core.Entities.MembershipEntity.Membership", b =>
+            modelBuilder.Entity("Shaghaf.Core.Entities.OrderEntities.Order", b =>
                 {
-                    b.Navigation("Rooms");
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("Shaghaf.Core.Entities.RoomEntities.Room", b =>

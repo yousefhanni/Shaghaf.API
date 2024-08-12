@@ -1,10 +1,4 @@
-﻿using Shaghaf.Core.Entities;
-using Shaghaf.Core.Entities.BookingEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shaghaf.Core.Entities.BookingEntities;
 
 namespace Shaghaf.Core.Specifications.Booking_Spec
 {
@@ -12,12 +6,12 @@ namespace Shaghaf.Core.Specifications.Booking_Spec
     {
         public BookWithAdditionalItemsSpecs() : base()
         {
-           // Includes.Add(B => B.AdditionalItems);
-        }
-        public BookWithAdditionalItemsSpecs(int bookId) : base(B => B.Id == bookId)
-        {
-            //Includes.Add(B => B.AdditionalItems);
+            AddInclude(b => b.Orders); // Includes associated orders if any
         }
 
+        public BookWithAdditionalItemsSpecs(int bookId) : base(B => B.Id == bookId)
+        {
+            AddInclude(b => b.Orders); // Includes associated orders if any
+        }
     }
 }

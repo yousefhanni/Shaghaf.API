@@ -16,7 +16,7 @@ namespace Shaghaf.Service.Sevices.Implementaion
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JWTSettings _jwt;
-        // Constructor to initialize UserManager, RoleManager, and JWT settings
+
         public AuthService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWTSettings> jwt)
         {
             _userManager = userManager;
@@ -24,18 +24,14 @@ namespace Shaghaf.Service.Sevices.Implementaion
             _jwt = jwt.Value;
         }
 
-        // Register a new user
         public async Task<AuthModel> RegisterAsync(RegisterModel model)
         {
-            // Check if phone number already exists to ensure data integrity and security
             if (await _userManager.Users.AnyAsync(u => u.PhoneNumber == model.PhoneNumber))
                 return new AuthModel { Message = "Phone number is already registered!" };
 
-            // Check if username already exists
             if (await _userManager.FindByNameAsync(model.Username) != null)
                 return new AuthModel { Message = "Username is already registered!" };
 
-            // Create a new user
             var user = new AppUser
             {
                 UserName = model.Username,
@@ -50,10 +46,8 @@ namespace Shaghaf.Service.Sevices.Implementaion
                 return new AuthModel { Message = errors };
             }
 
-            // Assign the user to "User" role
             await _userManager.AddToRoleAsync(user, "User");
 
-            // Generate JWT token
             var jwtSecurityToken = await CreateJwtToken(user);
 
             return new AuthModel
@@ -67,13 +61,9 @@ namespace Shaghaf.Service.Sevices.Implementaion
             };
         }
 
-
-        // User login
         public async Task<AuthModel> LoginAsync(LoginModel model)
         {
             var authModel = new AuthModel();
-
-            // Find the user by phone number
             var user = await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
 
             if (user is null || !await _userManager.CheckPasswordAsync(user, model.Password))
@@ -82,7 +72,6 @@ namespace Shaghaf.Service.Sevices.Implementaion
                 return authModel;
             }
 
-            // Generate JWT token
             var jwtSecurityToken = await CreateJwtToken(user);
             var rolesList = await _userManager.GetRolesAsync(user);
 
@@ -95,8 +84,6 @@ namespace Shaghaf.Service.Sevices.Implementaion
             return authModel;
         }
 
-
-        // Add role to a user
         public async Task<string> AddRoleAsync(AddRoleModel model)
         {
             var user = await _userManager.FindByIdAsync(model.UserId);
@@ -112,8 +99,6 @@ namespace Shaghaf.Service.Sevices.Implementaion
             return result.Succeeded ? string.Empty : "Something went wrong";
         }
 
-
-        // Create JWT token
         private async Task<JwtSecurityToken> CreateJwtToken(AppUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
@@ -122,10 +107,11 @@ namespace Shaghaf.Service.Sevices.Implementaion
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim("uid", user.Id)
-    }
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("uid", user.Id),
+                new Claim(ClaimTypes.MobilePhone, user.PhoneNumber) // Ensure the phone number is added as a claim
+            }
             .Union(userClaims)
             .Union(roleClaims);
 
@@ -141,7 +127,5 @@ namespace Shaghaf.Service.Sevices.Implementaion
 
             return jwtSecurityToken;
         }
-
     }
 }
-

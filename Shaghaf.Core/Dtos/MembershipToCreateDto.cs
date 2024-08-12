@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Shaghaf.Core.Dtos
 {
@@ -13,6 +9,6 @@ namespace Shaghaf.Core.Dtos
         public string Description { get; set; } = null!;
         public int DurationInDays { get; set; }
         public int MaxGuests { get; set; }
-        public ICollection<int> RoomIds { get; set; } = new List<int>();
+        public List<int> RoomIds { get; set; } = new List<int>(); // Changed from ICollection<int> to List<int>
     }
 }

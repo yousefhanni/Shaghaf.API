@@ -1,13 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Shaghaf.Core.Entities;
 using Shaghaf.Core.Entities.BookingEntities;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shaghaf.Infrastructure.Repositories.Implementation
 {
@@ -17,7 +11,7 @@ namespace Shaghaf.Infrastructure.Repositories.Implementation
         {
         }
 
-        public async Task<Booking> FindUniqueBookingAsync(int roomId, DateTime startDate, DateTime endDate, string customerName)
+        public async Task<Booking?> FindUniqueBookingAsync(int roomId, DateTime startDate, DateTime endDate, string customerName)
         {
             return await _context.Bookings.FirstOrDefaultAsync(b =>
                 b.RoomId == roomId &&
@@ -25,6 +19,16 @@ namespace Shaghaf.Infrastructure.Repositories.Implementation
                 b.StartDate <= endDate &&
                 b.CustomerName == customerName);
         }
-    }
 
+        public async Task<bool> UpdatePaymentStatusAsync(int bookingId, bool paymentStatus)
+        {
+            var booking = await _context.Bookings.FindAsync(bookingId);
+            if (booking == null) return false;
+
+            booking.PaymentStatus = paymentStatus;
+            booking.Status = paymentStatus ? BookingStatus.Confirmed : BookingStatus.Pending;
+            _context.Bookings.Update(booking);
+            return await _context.SaveChangesAsync() > 0;
+        }
+    }
 }

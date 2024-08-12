@@ -8,11 +8,11 @@ namespace Shaghaf.Core.Specifications.BookingSpecs
 {
     public class BookingWithSessionSpecification : BaseSpecifications<Booking>
     {
-        public BookingWithSessionSpecification(string sessionId)
-            : base(b => b.SessionId == sessionId)
-        {
-            // إضافة الكيانات المرتبطة
+        //public BookingWithSessionSpecification(string sessionId)
+        //    : base(b => b.SessionId == sessionId)
+        //{
+        //    // إضافة الكيانات المرتبطة
            
-        }
+        //}
     }
 }

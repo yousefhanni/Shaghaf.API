@@ -2,7 +2,6 @@
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Services.Contract;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -18,13 +17,24 @@ public class MembershipController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateMembership([FromBody] MembershipToCreateDto membershipDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var result = await _membershipService.CreateMembershipAsync(membershipDto);
-        return Ok(result);
+        return CreatedAtAction(nameof(GetMembershipById), new { id = result.Id }, result);
     }
+
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateMembership(int id, [FromBody] MembershipDto membershipDto)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         membershipDto.Id = id;
         await _membershipService.UpdateMembershipAsync(membershipDto);
         return NoContent();
@@ -33,9 +43,14 @@ public class MembershipController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetMembershipById(int id)
     {
-        var result = await _membershipService.GetMembershipByIdAsync(id);
-        if (result == null) return NotFound();
-        return Ok(result);
+        var membership = await _membershipService.GetMembershipByIdAsync(id);
+
+        if (membership == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(membership);
     }
 
     [HttpGet]
@@ -43,5 +58,17 @@ public class MembershipController : ControllerBase
     {
         var result = await _membershipService.GetAllMembershipsAsync();
         return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteMembership(int id)
+    {
+        var success = await _membershipService.DeleteMembershipAsync(id);
+        if (!success)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }

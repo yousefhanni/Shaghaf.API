@@ -1,6 +1,6 @@
 ﻿using Shaghaf.Core.Dtos;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Shaghaf.Core.Services.Contract
 {
@@ -10,5 +10,6 @@ namespace Shaghaf.Core.Services.Contract
         Task UpdateMembershipAsync(MembershipDto membershipDto);
         Task<MembershipDto?> GetMembershipByIdAsync(int id);
         Task<IReadOnlyList<MembershipDto>> GetAllMembershipsAsync();
+        Task<bool> DeleteMembershipAsync(int id);
     }
 }

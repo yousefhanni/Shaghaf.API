@@ -1,82 +1,105 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Services.Contract;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-[ApiController]
-[Route("api/[controller]")]
-public class BookingController : ControllerBase
+namespace Shaghaf.API.Controllers
 {
-    private readonly IBookingService _bookingService;
-    private readonly IPaymentService _paymentService;
-
-    public BookingController(IBookingService bookingService, IPaymentService paymentService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BookingController : ControllerBase
     {
-        _bookingService = bookingService ?? throw new ArgumentNullException(nameof(bookingService));
-        _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
-    }
+        private readonly IBookingService _bookingService;
+        private readonly IPaymentService _paymentService;
+        private readonly ILogger<BookingController> _logger;
 
-    [HttpPost]
-    public async Task<IActionResult> CreateBooking([FromBody] BookingToCreateDto bookingToCreateDto)
-    {
-        var result = await _bookingService.CreateBookingAsync(bookingToCreateDto);
-        return Ok(result);
-    }
-
-    [HttpPut("{bookingId}")]
-    public async Task<IActionResult> UpdateBooking(int bookingId, [FromBody] BookingDto bookingDto)
-    {
-        bookingDto.Id = bookingId;
-        await _bookingService.UpdateBookingAsync(bookingDto);
-        return NoContent();
-    }
-
-    [HttpGet("{bookingId}")]
-    [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<BookingDto>> GetBookingDetails(int bookingId)
-    {
-        var result = await _bookingService.GetBookingDetailsAsync(bookingId);
-        if (result == null)
-            return NotFound("Booking Not Found !!");
-        return Ok(result);
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<BookingDto>>> GetAllBookingDetails()
-    {
-        var result = await _bookingService.GetAllBookingDetailsAsync();
-        if (result == null || result.Count == 0)
-            return NotFound("No Bookings Found !!");
-        return Ok(result);
-    }
-
-    [HttpPost("payment")]
-    public async Task<IActionResult> CreatePayment([FromBody] PaymentDto paymentDto)
-    {
-        try
+        public BookingController(IBookingService bookingService, IPaymentService paymentService, ILogger<BookingController> logger)
         {
-            var session = await _paymentService.CreateCheckoutSession(paymentDto);
-            return Ok(new { url = session.Url });
+            _bookingService = bookingService;
+            _paymentService = paymentService;
+            _logger = logger;
         }
-        catch (Exception ex)
+        [HttpPost]
+        public async Task<IActionResult> CreateBooking([FromBody] BookingToCreateDto bookingToCreateDto)
         {
-            return BadRequest(ex.Message);
-        }
-    }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-    [HttpGet("payment/check-status/{bookingId}")]
-    public async Task<IActionResult> GetPaymentStatus(int bookingId)
-    {
-        try
-        {
-            var status = await _paymentService.CheckPaymentStatusAsync(bookingId);
-            return Ok(new { status });
+            var result = await _bookingService.CreateBookingAsync(bookingToCreateDto);
+
+            if (result == null)
+                return BadRequest(new { error = "Booking creation failed." });
+
+            var paymentSession = await _paymentService.CreateBookingCheckoutSession(
+                new PaymentDto
+                {
+                    Amount = result.Amount,
+                    Currency = bookingToCreateDto.Currency,
+                    SuccessUrl = "https://localhost:7095/success",
+                    CancelUrl = "https://localhost:7095/cancel",
+                    BookingId = result.Id
+                }
+            );
+
+            if (paymentSession == null)
+            {
+                return BadRequest(new { error = "Payment session creation failed." });
+            }
+
+            // Update the BookingToCreateDto with payment session information
+            result.PaymentIntentId = paymentSession.Id;
+            result.SessionId = paymentSession.Id;
+            result.PaymentStatus = false; // Assuming payment is not yet completed
+
+            return Ok(result);
         }
-        catch (Exception ex)
+
+
+        [HttpPut("{bookingId}")]
+        public async Task<IActionResult> UpdateBooking(int bookingId, [FromBody] BookingDto bookingDto)
         {
-            return BadRequest(ex.Message);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            bookingDto.Id = bookingId;
+            await _bookingService.UpdateBookingAsync(bookingDto);
+            return NoContent();
+        }
+
+        [HttpPost("create-payment")]
+        public async Task<IActionResult> CreatePayment([FromBody] PaymentDto paymentDto)
+        {
+            try
+            {
+                var paymentSession = await _paymentService.CreateBookingCheckoutSession(paymentDto);
+                return Ok(new { url = paymentSession.Url });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpPost("update-payment-intent")]
+        public async Task<IActionResult> UpdatePaymentIntent([FromBody] UpdatePaymentIntentDto updatePaymentIntentDto)
+        {
+            var updated = await _bookingService.UpdatePaymentIntentAsync(updatePaymentIntentDto.Id, updatePaymentIntentDto.PaymentIntentId);
+            if (!updated)
+                return NotFound("Booking not found");
+
+            return Ok("Payment intent updated successfully");
+        }
+
+        [HttpGet("check-payment-status/{bookingId}")]
+        public async Task<IActionResult> CheckBookingPaymentStatus(int bookingId)
+        {
+            var isPaymentConfirmed = await _bookingService.CheckBookingPaymentStatusAsync(bookingId);
+
+            if (!isPaymentConfirmed)
+            {
+                return BadRequest(new { error = "Payment not confirmed or booking not found." });
+            }
+
+            return Ok(new { success = "Payment confirmed for the booking." });
         }
     }
 }

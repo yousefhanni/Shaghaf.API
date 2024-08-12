@@ -58,8 +58,11 @@ namespace Shaghaf.Infrastructure.Repositories.Implementation
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>(), spec);
         }
 
-        public void Add(T entity)
-       => _context.Set<T>().Add(entity);
+        public async Task AddAsync(T entity) // Change void to Task and make it async
+        {
+            await _context.Set<T>().AddAsync(entity);
+        }
+
 
         public void Update(T entity)
                 => _context.Set<T>().Update(entity);

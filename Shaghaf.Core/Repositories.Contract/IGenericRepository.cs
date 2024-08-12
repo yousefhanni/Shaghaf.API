@@ -12,7 +12,7 @@ namespace Shaghaf.Core.Repositories.Contract
         Task<T?> GetByIdWithSpecAsync(ISpecifications<T> spec);
         Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecifications<T> spec);
         Task<T?> GetEntityWithSpecAsync(ISpecifications<T> spec); // Add this method
-        void Add(T entity);
+        Task AddAsync(T entity); // Change void to Task
         void Update(T entity);
         void Delete(T entity);
     }

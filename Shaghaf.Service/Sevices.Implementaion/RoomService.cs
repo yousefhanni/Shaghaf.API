@@ -21,7 +21,7 @@ public class RoomService : IRoomService
     public async Task<RoomDto> CreateRoomAsync(RoomToCreateDto roomDto)
     {
         var room = _mapper.Map<Room>(roomDto);
-        _unitOfWork.Repository<Room>().Add(room);
+        _unitOfWork.Repository<Room>().AddAsync(room);
         await _unitOfWork.CompleteAsync();
         return _mapper.Map<RoomDto>(room);
     }

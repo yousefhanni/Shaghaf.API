@@ -1,60 +1,101 @@
-﻿using Shaghaf.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Shaghaf.Core;
 using Shaghaf.Core.Entities;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Infrastructure.Data;
-using Shaghaf.Infrastructure.Repositories;
 using Shaghaf.Infrastructure.Repositories.Implementation;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Shaghaf.Infrastructure
 {
-    public class UnitOfWork: IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private readonly StoreContext _dbcontext;
-
         private Hashtable _repositories;
+        private IDbContextTransaction _currentTransaction;
 
-        //Ask from Clr For Creating object from dbcontext Implicitly
         public UnitOfWork(StoreContext dbcontext)
         {
             _dbcontext = dbcontext;
-
-            ///When Create object from UnitOfWork at OrderService => execute (new) 
-            ///(new) =>  to repositories with null,
-            ///We Must Initialize to _repositories and Change Value of _repositoriy(Null)       
-
             _repositories = new Hashtable();
         }
 
-        //GenericRepository is class is typically used for common CRUD operations on entities.
-        //Use This method to (Create object of GenericRepository per Request) 
         public IGenericRepository<TEntity> Repository<TEntity>() where TEntity : BaseEntity
         {
-            var Key = typeof(TEntity).Name; //""Order""
+            var key = typeof(TEntity).Name;
 
-            //Which if repository first time required   
-            if (!_repositories.ContainsKey(Key))
+            if (!_repositories.ContainsKey(key))
             {
-                //=> (Create object of GenericRepository of specific entity type per Request) 
-
                 var repository = new GenericRepository<TEntity>(_dbcontext);
-
-                _repositories.Add(Key, repository);
+                _repositories.Add(key, repository);
             }
 
-            return _repositories[Key] as IGenericRepository<TEntity>;
+            return _repositories[key] as IGenericRepository<TEntity>;
         }
 
-
         public async Task<int> CompleteAsync()
-                 => await _dbcontext.SaveChangesAsync();
+            {
+            return await _dbcontext.SaveChangesAsync();
+        }
+
+        public IDbContextTransaction BeginTransaction()
+        {
+            if (_currentTransaction != null)
+            {
+                return null;
+            }
+            _currentTransaction = _dbcontext.Database.BeginTransaction();
+            return _currentTransaction;
+        }
+
+        public async Task CommitTransactionAsync()
+        {
+            try
+            {
+                await _dbcontext.SaveChangesAsync();
+                _currentTransaction?.Commit();
+            }
+            catch
+            {
+                await RollbackTransactionAsync();
+                throw;
+            }
+            finally
+            {
+                if (_currentTransaction != null)
+                {
+                    await _currentTransaction.DisposeAsync();
+                    _currentTransaction = null;
+                }
+            }
+        }
+
+        public async Task RollbackTransactionAsync()
+        {
+            try
+            {
+                _currentTransaction?.Rollback();
+            }
+            finally
+            {
+                if (_currentTransaction != null)
+                {
+                    await _currentTransaction.DisposeAsync();
+                    _currentTransaction = null;
+                }
+            }
+        }
 
         public async ValueTask DisposeAsync()
-           => await _dbcontext.DisposeAsync();
+        {
+            if (_currentTransaction != null)
+            {
+                await _currentTransaction.DisposeAsync();
+            }
+            await _dbcontext.DisposeAsync();
+        }
     }
 }

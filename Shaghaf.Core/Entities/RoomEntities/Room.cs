@@ -1,5 +1,6 @@
 ﻿using Shaghaf.Core.Entities.BirthdayEntity;
 using Shaghaf.Core.Entities.HomeEntities;
+using Shaghaf.Core.Entities.MembershipEntity;
 
 namespace Shaghaf.Core.Entities.RoomEntities
 {
@@ -18,5 +19,7 @@ namespace Shaghaf.Core.Entities.RoomEntities
         public RoomType Type { get; set; } = RoomType.FunnyRoom; // Default funny
         public ICollection<PhotoSession> PhotoSessions { get; set; } = new List<PhotoSession>(); // Photo sessions
         public ICollection<Birthday> Birthdays { get; set; } = new List<Birthday>(); // Birthdays
+                                                                                                        
+        public ICollection<Membership> Memberships { get; set; } = new List<Membership>();  // Navigation property for the many-to-many relationship with Membership
     }
 }

@@ -2,10 +2,9 @@
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Services.Contract;
 using System.Threading.Tasks;
+using Talabat.APIs.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class BirthdayController : ControllerBase
+public class BirthdayController : BaseApiController
 {
     private readonly IBirthdayService _birthdayService;
 

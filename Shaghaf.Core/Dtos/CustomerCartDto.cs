@@ -1,23 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shaghaf.Core.Dtos;
 
-namespace Shaghaf.Core.Dtos
+public class CustomerCartDto
 {
-    public class CustomerCartDto
-    {
-        [Required]
-        public string Id { get; set; } // ID of the cart
-
-        [Required]
-        public List<CartItemDto> Items { get; set; } // List of cart items
-
-       // public string PaymentIntentId { get; set; } // Payment intent ID for tracking payment intents
-
-       // public string SessionId { get; set; } // Session ID for Stripe session
-    }
-
+    public string Id { get; set; }
+    public List<CartItemDto> Items { get; set; }
+    public string PaymentIntentId { get; set; }
+    public bool PaymentStatus { get; set; }
+    public string SessionId { get; set; } 
 }

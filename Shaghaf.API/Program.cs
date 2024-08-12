@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Shaghaf.Application.Mappings;
 using Shaghaf.Core;
 using Shaghaf.Core.Repositories.Contract;
@@ -20,6 +20,10 @@ using System.Text.Json;
 using Shaghaf.Service.Sevices.Implementaion;
 using Shaghaf.Infrastructure.Repositories.Implementation;
 using StackExchange.Redis;
+using Stripe.Climate;
+using Microsoft.OpenApi.Models;
+using Shaghaf.Core.Entities.OrderEntities;
+using Shaghaf.Service.Services.Implementation;
 
 namespace Shaghaf.API
 {
@@ -42,26 +46,32 @@ namespace Shaghaf.API
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; // Ignore null values
             });
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<StoreContext>(options =>
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(c =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shaghaf API", Version = "v1" });
             });
 
-                    //Allow (DI) to Redis DB
-                    //why AddSingleton ? to 1.once connection opened remains present 2. To caching 
-                    builder.Services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
-                    {
-                        var connection = builder.Configuration.GetConnectionString("Redis");
-                        return ConnectionMultiplexer.Connect(connection);
-                    });
+            #region Connections
+
+            builder.Services.AddDbContext<StoreContext>(options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
+
+            //Allow (DI) to Redis DB
+            //why AddSingleton ? to 1.once connection opened remains present 2. To caching 
+            builder.Services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
+            {
+                var connection = builder.Configuration.GetConnectionString("Redis");
+                return ConnectionMultiplexer.Connect(connection);
+            });
 
             // Add DbContext for AppIdentity with SQL Server configuration          
             builder.Services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"))); 
+            #endregion
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped(typeof(IRoomService), typeof(RoomService));
@@ -76,11 +86,17 @@ namespace Shaghaf.API
             builder.Services.AddScoped<IMenuItemService, MenuItemService>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
 
+            builder.Services.AddScoped<IOrderService, Shaghaf.Service.Services.Implementation.OrderService>();
+
+
+            // builder.Services.AddScoped<IOrderService, OrderService>();
+            // builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             //DI to AuthService
             builder.Services.AddScoped<IAuthService, AuthService>();
 
+            builder.Services.AddLogging(); // Ensure logging is added
 
             #region Stripe configurations
             // Add Stripe configuration settings
@@ -169,7 +185,10 @@ namespace Shaghaf.API
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shaghaf API v1");
+                });
             }
 
             app.UseMiddleware<CustomAuthenticationMiddleware>(); // Use custom authentication middleware
