@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shaghaf.Core.Dtos;
+using Shaghaf.Core.Dtos.BirthdayDtos;
 using Shaghaf.Core.Services.Contract;
 using System.Threading.Tasks;
 using Talabat.APIs.Controllers;
@@ -42,4 +42,12 @@ public class BirthdayController : BaseApiController
         var result = await _birthdayService.GetAllBirthdaysAsync();
         return Ok(result);
     }
+
+    [HttpDelete("{birthdayId}")]
+    public async Task<IActionResult> DeleteBirthday(int birthdayId)
+    {
+        await _birthdayService.DeleteBirthdayAsync(birthdayId);
+        return NoContent();
+    }
+
 }

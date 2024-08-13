@@ -6,9 +6,11 @@ using System.Text.Json;
 public class CartRepository : ICartRepository
 {
     private readonly IDatabase _database;
+    private readonly IConnectionMultiplexer _redisConnection;
 
     public CartRepository(IConnectionMultiplexer redisConnection)
     {
+        _redisConnection = redisConnection;
         _database = redisConnection.GetDatabase();
     }
 
@@ -30,5 +32,24 @@ public class CartRepository : ICartRepository
     public async Task<bool> DeleteCartAsync(string cartId)
     {
         return await _database.KeyDeleteAsync(cartId);
+    }
+
+    public async Task<IEnumerable<CustomerCart>> GetAllCartsAsync()
+    {
+        var server = _redisConnection.GetServer(_redisConnection.GetEndPoints().First());
+        var keys = server.Keys(database: _database.Database, pattern: "*");
+
+        var carts = new List<CustomerCart>();
+
+        foreach (var key in keys)
+        {
+            var cart = await _database.StringGetAsync(key);
+            if (!cart.IsNullOrEmpty)
+            {
+                carts.Add(JsonSerializer.Deserialize<CustomerCart>(cart));
+            }
+        }
+
+        return carts;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Shaghaf.Core.Entities.BirthdayEntity;
-using Shaghaf.Core.Entities.HomeEntities;
 using Shaghaf.Core.Entities.MembershipEntity;
 
 namespace Shaghaf.Core.Entities.RoomEntities

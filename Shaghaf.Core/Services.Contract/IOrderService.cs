@@ -14,6 +14,8 @@ namespace Shaghaf.Core.Services.Contract
         Task<bool> CheckOrderPaymentStatusAsync(int orderId);
         Task<bool> UpdatePaymentIntentAsync(int orderId, string paymentIntentId);
         Task<string> GetCartIdByOrderIdAsync(int orderId); // Add this method signature
+        Task DeleteOrderAsync(int orderId);  // إضافة طريقة الحذف
+
 
     }
 }

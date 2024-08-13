@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shaghaf.Core.Dtos;
+using Shaghaf.Core.Dtos.MenuItemDtos;
 using Shaghaf.Core.Services.Contract;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -1,19 +1,19 @@
-﻿    using AutoMapper;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Options;
-    using Shaghaf.API.Helpers;
-    using Shaghaf.Core.Dtos;
-    using Shaghaf.Core.Entities.BookingEntities;
-    using Shaghaf.Core.Repositories.Contract;
-    using Shaghaf.Core;
-    using Stripe.Checkout;
-    using Stripe;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Stripe.Issuing;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Shaghaf.API.Helpers;
+using Shaghaf.Core.Entities.BookingEntities;
+using Shaghaf.Core.Repositories.Contract;
+using Shaghaf.Core;
+using Stripe.Checkout;
+using Stripe;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Stripe.Issuing;
+using Shaghaf.Core.Dtos.PaymentDtos;
 
-    public class PaymentService : IPaymentService
+public class PaymentService : IPaymentService
     {
         private readonly ICartRepository _cartRepository;
         private readonly IUnitOfWork _unitOfWork;

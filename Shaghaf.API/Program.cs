@@ -53,7 +53,7 @@ namespace Shaghaf.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shaghaf API", Version = "v1" });
             });
 
-            #region Connections
+            #region Database and RedisDb Connections
 
             builder.Services.AddDbContext<StoreContext>(options =>
     {

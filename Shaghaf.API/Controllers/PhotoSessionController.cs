@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shaghaf.Core.Dtos;
+using Shaghaf.Core.Dtos.PhotoSessionDtos;
 using Shaghaf.Core.Services.Contract;
 
 [ApiController]
@@ -51,5 +51,16 @@ public class PhotoSessionController : ControllerBase
     {
         var result = await _photoSessionService.GetAllPhotoSessionsAsync();
         return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeletePhotoSession(int id)
+    {
+        var result = await _photoSessionService.DeletePhotoSessionAsync(id);
+        if (!result)
+        {
+            return NotFound("Photo session not found.");
+        }
+        return NoContent();
     }
 }

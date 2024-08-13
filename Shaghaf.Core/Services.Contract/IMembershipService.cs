@@ -1,4 +1,4 @@
-﻿using Shaghaf.Core.Dtos;
+﻿using Shaghaf.Core.Dtos.MembershipDtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

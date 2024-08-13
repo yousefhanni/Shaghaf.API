@@ -7,6 +7,8 @@ using Shaghaf.Core;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Shaghaf.Core.Specifications.Booking_Spec;
+using Shaghaf.Core.Dtos.BookingDtos;
+using Shaghaf.Core.Dtos.PaymentDtos;
 
 namespace Shaghaf.Service.Services.Implementation
 {
@@ -43,9 +45,6 @@ namespace Shaghaf.Service.Services.Implementation
         BookingId = booking.Id // Now we have a valid BookingId
     });
 
-    // Update the booking with the payment session information
-  //  booking.PaymentIntentId = paymentSession.PaymentIntentId;
-   /* booking.SessionId = paymentSession.Id*/;
     booking.PaymentStatus = false;
 
     // Save the booking again with updated payment info
@@ -54,17 +53,6 @@ namespace Shaghaf.Service.Services.Implementation
 
     return _mapper.Map<BookingDto>(booking);
 }
-
-
-
-
-        //public async Task<BookingDto> CreateBookingAsync(BookingToCreateDto bookingToCreateDto)
-        //{
-        //    var booking = _mapper.Map<Booking>(bookingToCreateDto);
-        //    await _unitOfWork.Repository<Booking>().AddAsync(booking);
-        //    await _unitOfWork.CompleteAsync();
-        //    return _mapper.Map<BookingDto>(booking);
-        //}
 
         public async Task UpdateBookingAsync(BookingDto bookingDto)
         {
@@ -81,22 +69,6 @@ namespace Shaghaf.Service.Services.Implementation
             _bookingRepository.Update(booking);
             await _unitOfWork.CompleteAsync();
         }
-
-        //public async Task UpdateBookingAsync(BookingDto bookingDto)
-        //{
-        //    var booking = await _bookingRepository.FindUniqueBookingAsync(
-        //        bookingDto.RoomId, bookingDto.StartDate, bookingDto.EndDate, bookingDto.CustomerName);
-
-        //    if (booking == null)
-        //    {
-        //        throw new KeyNotFoundException("No booking found matching the specified criteria.");
-        //    }
-
-        //    booking = _mapper.Map(bookingDto, booking);
-
-        //    _bookingRepository.Update(booking);
-        //    await _unitOfWork.CompleteAsync();
-        //}
 
         public async Task<BookingDto?> GetBookingDetailsAsync(int bookingId)
         {
@@ -143,5 +115,17 @@ namespace Shaghaf.Service.Services.Implementation
             await _unitOfWork.CompleteAsync();
             return true;
         }
+        public async Task DeleteBookingAsync(int bookingId)
+        {
+            var booking = await _unitOfWork.Repository<Booking>().GetByIdAsync(bookingId);
+            if (booking == null)
+            {
+                throw new KeyNotFoundException("Booking not found.");
+            }
+
+            _unitOfWork.Repository<Booking>().Delete(booking);
+            await _unitOfWork.CompleteAsync();
+        }
+
     }
 }

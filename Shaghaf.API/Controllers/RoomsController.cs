@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Services.Contract;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Shaghaf.Core.Dtos.RoomDtos;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -44,4 +44,11 @@ public class RoomController : ControllerBase
         var result = await _roomService.GetAllRoomsAsync();
         return Ok(result);
     }
+    [HttpDelete("{roomId}")]
+    public async Task<IActionResult> DeleteRoom(int roomId)
+    {
+        await _roomService.DeleteRoomAsync(roomId);
+        return NoContent();
+    }
+
 }

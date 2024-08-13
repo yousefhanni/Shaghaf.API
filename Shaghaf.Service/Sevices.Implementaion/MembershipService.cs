@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities.MembershipEntity;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Core.Services.Contract;
@@ -11,6 +10,7 @@ using Shaghaf.Core.Entities.RoomEntities;
 using Shaghaf.Core;
 using Microsoft.Extensions.Logging;
 using Shaghaf.Service.Services.Implementation;
+using Shaghaf.Core.Dtos.MembershipDtos;
 
 public class MembershipService : IMembershipService
 {

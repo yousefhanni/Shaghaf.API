@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities.RoomEntities;
 using Shaghaf.Core.Services.Contract;
 using Shaghaf.Core;
 using Shaghaf.Core.Specifications;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Shaghaf.Core.Dtos.RoomDtos;
 
 public class RoomService : IRoomService
 {
@@ -41,13 +41,20 @@ public class RoomService : IRoomService
 
     public async Task<RoomDto?> GetRoomByIdAsync(int id)
     {
-        var room = await _unitOfWork.Repository<Room>().GetByIdAsync(id);
-        return room == null ? null : _mapper.Map<RoomDto>(room);
+        var roomSpec = new RoomsByIdsSpec(new List<int> { id });
+        var room = await _unitOfWork.Repository<Room>().GetEntityWithSpecAsync(roomSpec);
+
+        if (room == null)
+            return null;
+
+        return _mapper.Map<RoomDto>(room);
     }
+
 
     public async Task<IReadOnlyList<RoomDto>> GetAllRoomsAsync()
     {
-        var rooms = await _unitOfWork.Repository<Room>().GetAllAsync();
+        var spec = new RoomsWithMembershipsSpec(); // Custom specification to include Memberships
+        var rooms = await _unitOfWork.Repository<Room>().GetAllWithSpecAsync(spec);
         return _mapper.Map<IReadOnlyList<RoomDto>>(rooms);
     }
 
@@ -56,4 +63,16 @@ public class RoomService : IRoomService
         var rooms = await _unitOfWork.Repository<Room>().GetAllWithSpecAsync(spec);
         return _mapper.Map<IReadOnlyList<RoomDto>>(rooms);
     }
+    public async Task DeleteRoomAsync(int roomId)
+    {
+        var room = await _unitOfWork.Repository<Room>().GetByIdAsync(roomId);
+        if (room == null)
+        {
+            throw new KeyNotFoundException("Room not found.");
+        }
+
+        _unitOfWork.Repository<Room>().Delete(room);
+        await _unitOfWork.CompleteAsync();
+    }
+
 }

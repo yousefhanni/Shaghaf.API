@@ -1,20 +1,21 @@
-﻿using Shaghaf.Core.Dtos;
-using Shaghaf.Core.Entities.HomeEntities;
-using System;
+﻿using Shaghaf.Core.Entities.MembershipEntity;
+using Shaghaf.Core.Entities.BirthdayEntity;
+using Shaghaf.Core.Entities.RoomEntities;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Shaghaf.Core.Entities;
+using Shaghaf.Core.Dtos.BirthdayDtos;
+using Shaghaf.Core.Dtos.PhotoSessionDtos;
+using Shaghaf.Core.Dtos.RoomDtos;
 
 namespace Shaghaf.Core.Services.Contract
 {
     public interface IHomeService
     {
-        public Task<IReadOnlyList<Home>> GetHomeDataAsync();
-       //public Task<List<MembershipDto>> GetMembershipsAsync();
-        //public Task<List<BirthdayDto>> GetBirthdaysAsync();
-        //public Task<List<PhotoSessionDto>> GetPhotoSessionsAsync();
-        public Task<List<AdvertisementDto>> GetAdvertisementsAsync();
-        public Task<List<CategoryDto>> GetCategoriesAsync();
+        Task<IEnumerable<MenuItem>> GetMenuItemsAsync(); // To get all menu items
+        Task<IEnumerable<RoomDto>> GetRoomsAsync(); // To get all rooms
+        Task<IEnumerable<MembershipDto>> GetMembershipsAsync(); // To get all memberships
+        Task<IEnumerable<BirthdayDto>> GetBirthdaysAsync(); // To get all birthdays
+        Task<IEnumerable<PhotoSessionDto>> GetPhotoSessionsAsync(); // To get all photo sessions
     }
 }

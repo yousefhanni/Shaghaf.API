@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shaghaf.Core.Dtos;
+using Shaghaf.Core.Dtos.MembershipDtos;
 using Shaghaf.Core.Services.Contract;
 using System.Threading.Tasks;
 

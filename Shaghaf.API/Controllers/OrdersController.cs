@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Services.Contract;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Shaghaf.Core.Dtos.PaymentDtos;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -144,4 +144,11 @@ public class OrdersController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+    [HttpDelete("{orderId}")]
+    public async Task<IActionResult> DeleteOrder(int orderId)
+    {
+        await _orderService.DeleteOrderAsync(orderId);
+        return NoContent();
+    }
+
 }

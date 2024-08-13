@@ -1,12 +1,9 @@
-﻿
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Repositories.Contract;
 using AutoMapper;
 using Shaghaf.Core.Entities.Cart_Entities;
 using Talabat.APIs.Controllers;
-using Talabat.APIs.Errors;
 
 namespace Shaghaf.API.Controllers
 {
@@ -26,6 +23,13 @@ namespace Shaghaf.API.Controllers
         {
             var cart = await _cartRepository.GetCartAsync(id);
             return Ok(cart ?? new CustomerCart(id));
+        }
+
+        [HttpGet("all")] // GET: /api/cart/all
+        public async Task<ActionResult<IEnumerable<CustomerCart>>> GetAllCarts()
+        {
+            var carts = await _cartRepository.GetAllCartsAsync();
+            return Ok(carts);
         }
 
         [HttpPost] // POST: /api/cart
@@ -50,4 +54,3 @@ namespace Shaghaf.API.Controllers
         }
     }
 }
-

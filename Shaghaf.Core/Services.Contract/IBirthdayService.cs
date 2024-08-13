@@ -1,4 +1,6 @@
-﻿using Shaghaf.Core.Dtos;
+﻿using Shaghaf.Core.Dtos.BirthdayDtos;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Shaghaf.Core.Services.Contract
 {
@@ -8,5 +10,6 @@ namespace Shaghaf.Core.Services.Contract
         Task UpdateBirthdayAsync(BirthdayDto birthdayDto);
         Task<BirthdayDto?> GetBirthdayByIdAsync(int id);
         Task<IReadOnlyList<BirthdayDto>> GetAllBirthdaysAsync();
+        Task DeleteBirthdayAsync(int birthdayId);  // إضافة طريقة الحذف
     }
 }

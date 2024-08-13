@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Shaghaf.Core;
 using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Dtos.OrderDtos;
+using Shaghaf.Core.Dtos.PaymentDtos;
 using Shaghaf.Core.Entities.OrderEntities;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Core.Services.Contract;
@@ -144,5 +145,17 @@ namespace Shaghaf.Service.Services.Implementation
 
             return order.CartId;
         }
+        public async Task DeleteOrderAsync(int orderId)
+        {
+            var order = await _unitOfWork.Repository<Order>().GetByIdAsync(orderId);
+            if (order == null)
+            {
+                throw new KeyNotFoundException("Order not found.");
+            }
+
+            _unitOfWork.Repository<Order>().Delete(order);
+            await _unitOfWork.CompleteAsync();
+        }
+
     }
 }

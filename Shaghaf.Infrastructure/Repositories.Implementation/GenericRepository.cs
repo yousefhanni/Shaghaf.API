@@ -6,7 +6,6 @@ using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Infrastructure.Data;
 using Shaghaf.Core.Entities;
 using Shaghaf.Core.Specifications;
-using Shaghaf.Core.Entities.HomeEntities;
 
 namespace Shaghaf.Infrastructure.Repositories.Implementation
 {
@@ -36,14 +35,7 @@ namespace Shaghaf.Infrastructure.Repositories.Implementation
 
         public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecifications<T> spec)
         {
-            if (typeof(T) == typeof(Home))
-            {
-                return (IReadOnlyList<T>)await _context.Set<Home>()
-                    .Include(H => H.Categories)
-                    .Include(H => H.Advertisements)
-                    .Include(H => H.Location)
-                    .ToListAsync();
-            }
+
             return await ApplySpecification(spec).ToListAsync();
         }
 

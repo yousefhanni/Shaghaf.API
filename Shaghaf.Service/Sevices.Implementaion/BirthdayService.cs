@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using Shaghaf.Core;
-using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities.BirthdayEntity;
-using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Core.Services.Contract;
+using Shaghaf.Core;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Shaghaf.Core.Dtos.BirthdayDtos;
 
 public class BirthdayService : IBirthdayService
 {
@@ -21,7 +20,7 @@ public class BirthdayService : IBirthdayService
     public async Task<BirthdayDto> CreateBirthdayAsync(BirthdayToCreateDto birthdayToCreateDto)
     {
         var birthday = _mapper.Map<Birthday>(birthdayToCreateDto);
-        _unitOfWork.Repository<Birthday>().AddAsync(birthday);
+        await _unitOfWork.Repository<Birthday>().AddAsync(birthday);
         await _unitOfWork.CompleteAsync();
         return _mapper.Map<BirthdayDto>(birthday);
     }
@@ -52,4 +51,17 @@ public class BirthdayService : IBirthdayService
         var birthdays = await _unitOfWork.Repository<Birthday>().GetAllWithSpecAsync(spec);
         return _mapper.Map<IReadOnlyList<BirthdayDto>>(birthdays);
     }
+    public async Task DeleteBirthdayAsync(int birthdayId)
+    {
+        var birthday = await _unitOfWork.Repository<Birthday>().GetByIdAsync(birthdayId);
+        if (birthday == null)
+        {
+            throw new KeyNotFoundException("Birthday not found.");
+        }
+
+        _unitOfWork.Repository<Birthday>().Delete(birthday);
+        await _unitOfWork.CompleteAsync();
+    }
+
+
 }

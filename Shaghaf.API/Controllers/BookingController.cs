@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shaghaf.Core.Dtos;
+using Shaghaf.Core.Dtos.BookingDtos;
+using Shaghaf.Core.Dtos.PaymentDtos;
 using Shaghaf.Core.Services.Contract;
 
 namespace Shaghaf.API.Controllers
@@ -101,5 +102,12 @@ namespace Shaghaf.API.Controllers
 
             return Ok(new { success = "Payment confirmed for the booking." });
         }
+        [HttpDelete("{bookingId}")]
+        public async Task<IActionResult> DeleteBooking(int bookingId)
+        {
+            await _bookingService.DeleteBookingAsync(bookingId);
+            return NoContent();
+        }
+
     }
 }

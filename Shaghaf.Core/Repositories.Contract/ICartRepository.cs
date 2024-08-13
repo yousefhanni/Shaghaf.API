@@ -7,5 +7,6 @@ namespace Shaghaf.Core.Repositories.Contract
         Task<CustomerCart?> GetCartAsync(string cartId);
         Task<CustomerCart?> UpdateCartAsync(CustomerCart cart);
         Task<bool> DeleteCartAsync(string cartId);
+        Task<IEnumerable<CustomerCart>> GetAllCartsAsync();     
     }
 }

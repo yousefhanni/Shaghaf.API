@@ -1,4 +1,4 @@
-﻿using Shaghaf.Core.Dtos;
+﻿using Shaghaf.Core.Dtos.PhotoSessionDtos;
 
 namespace Shaghaf.Core.Services.Contract
 {
@@ -8,5 +8,6 @@ namespace Shaghaf.Core.Services.Contract
         Task UpdatePhotoSessionAsync(PhotoSessionDto photoSessionDto);
         Task<PhotoSessionDto?> GetPhotoSessionByIdAsync(int id);
         Task<IReadOnlyList<PhotoSessionDto>> GetAllPhotoSessionsAsync();
+        Task<bool> DeletePhotoSessionAsync(int id); 
     }
 }

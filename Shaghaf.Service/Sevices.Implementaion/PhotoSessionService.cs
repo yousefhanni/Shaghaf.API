@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
-using Shaghaf.Core.Dtos;
 using Shaghaf.Core.Entities.BirthdayEntity;
 using Shaghaf.Core.Services.Contract;
 using Shaghaf.Core;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Shaghaf.Core.Dtos.PhotoSessionDtos;
 
 public class PhotoSessionService : IPhotoSessionService
 {
@@ -46,5 +48,18 @@ public class PhotoSessionService : IPhotoSessionService
     {
         var photoSessions = await _unitOfWork.Repository<PhotoSession>().GetAllAsync();
         return _mapper.Map<IReadOnlyList<PhotoSessionDto>>(photoSessions);
+    }
+
+    public async Task<bool> DeletePhotoSessionAsync(int id)
+    {
+        var photoSession = await _unitOfWork.Repository<PhotoSession>().GetByIdAsync(id);
+        if (photoSession == null)
+        {
+            return false;
+        }
+
+        _unitOfWork.Repository<PhotoSession>().Delete(photoSession);
+        await _unitOfWork.CompleteAsync();
+        return true;
     }
 }

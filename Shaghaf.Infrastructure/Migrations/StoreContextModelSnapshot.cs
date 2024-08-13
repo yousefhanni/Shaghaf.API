@@ -216,115 +216,6 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Advertisement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EventDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("HomeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HomeId");
-
-                    b.ToTable("Advertisements");
-                });
-
-            modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("HomeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HomeId");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Home", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Heading")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("Homes");
-                });
-
-            modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Location", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Locations");
-                });
-
             modelBuilder.Entity("Shaghaf.Core.Entities.MembershipEntity.Membership", b =>
                 {
                     b.Property<int>("Id")
@@ -590,39 +481,6 @@ namespace Shaghaf.Infrastructure.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Advertisement", b =>
-                {
-                    b.HasOne("Shaghaf.Core.Entities.HomeEntities.Home", "Home")
-                        .WithMany("Advertisements")
-                        .HasForeignKey("HomeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Home");
-                });
-
-            modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Category", b =>
-                {
-                    b.HasOne("Shaghaf.Core.Entities.HomeEntities.Home", "Home")
-                        .WithMany("Categories")
-                        .HasForeignKey("HomeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Home");
-                });
-
-            modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Home", b =>
-                {
-                    b.HasOne("Shaghaf.Core.Entities.HomeEntities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-                });
-
             modelBuilder.Entity("Shaghaf.Core.Entities.OrderEntities.Order", b =>
                 {
                     b.HasOne("Shaghaf.Core.Entities.BookingEntities.Booking", "Booking")
@@ -681,13 +539,6 @@ namespace Shaghaf.Infrastructure.Migrations
             modelBuilder.Entity("Shaghaf.Core.Entities.BookingEntities.Booking", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("Shaghaf.Core.Entities.HomeEntities.Home", b =>
-                {
-                    b.Navigation("Advertisements");
-
-                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("Shaghaf.Core.Entities.OrderEntities.Order", b =>

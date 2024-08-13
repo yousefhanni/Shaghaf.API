@@ -1,4 +1,4 @@
-﻿using Shaghaf.Core.Dtos;
+﻿using Shaghaf.Core.Dtos.PaymentDtos;
 using Stripe.Checkout;
 using System.Threading.Tasks;
 

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Shaghaf.Core;
-using Shaghaf.Core.Dtos;
+using Shaghaf.Core.Dtos.MenuItemDtos;
 using Shaghaf.Core.Entities;
 using Shaghaf.Core.Repositories.Contract;
 using Shaghaf.Core.Services.Contract;
