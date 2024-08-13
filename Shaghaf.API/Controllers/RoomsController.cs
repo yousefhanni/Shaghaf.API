@@ -3,10 +3,10 @@ using Shaghaf.Core.Services.Contract;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Shaghaf.Core.Dtos.RoomDtos;
+using Talabat.APIs.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class RoomController : ControllerBase
+
+public class RoomController : BaseApiController
 {
     private readonly IRoomService _roomService;
 

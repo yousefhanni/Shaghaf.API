@@ -31,8 +31,7 @@ namespace Shaghaf.Infrastructure.Data.Config.Room_Config
             builder.Property(room => room.Rate)
                 .HasColumnType("decimal(12,1)");
 
-            builder.Property(room => room.Offer)
-                .HasColumnType("decimal(12,2)");
+       
 
             builder.Property(room => room.Price)
                 .HasColumnType("decimal(12,2)");

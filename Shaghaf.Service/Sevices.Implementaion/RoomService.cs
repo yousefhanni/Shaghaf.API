@@ -50,7 +50,6 @@ public class RoomService : IRoomService
         return _mapper.Map<RoomDto>(room);
     }
 
-
     public async Task<IReadOnlyList<RoomDto>> GetAllRoomsAsync()
     {
         var spec = new RoomsWithMembershipsSpec(); // Custom specification to include Memberships
@@ -63,6 +62,7 @@ public class RoomService : IRoomService
         var rooms = await _unitOfWork.Repository<Room>().GetAllWithSpecAsync(spec);
         return _mapper.Map<IReadOnlyList<RoomDto>>(rooms);
     }
+
     public async Task DeleteRoomAsync(int roomId)
     {
         var room = await _unitOfWork.Repository<Room>().GetByIdAsync(roomId);
@@ -74,5 +74,4 @@ public class RoomService : IRoomService
         _unitOfWork.Repository<Room>().Delete(room);
         await _unitOfWork.CompleteAsync();
     }
-
 }

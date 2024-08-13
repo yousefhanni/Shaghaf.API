@@ -11,6 +11,6 @@ namespace Shaghaf.Core.Services.Contract
         Task UpdateRoomAsync(RoomDto roomDto);
         Task<RoomDto?> GetRoomByIdAsync(int id);
         Task<IReadOnlyList<RoomDto>> GetAllRoomsAsync();
-        Task DeleteRoomAsync(int roomId);  // إضافة طريقة الحذف
+        Task DeleteRoomAsync(int roomId);  
     }
 }

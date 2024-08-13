@@ -2,10 +2,10 @@
 using Shaghaf.Core.Dtos.MembershipDtos;
 using Shaghaf.Core.Services.Contract;
 using System.Threading.Tasks;
+using Talabat.APIs.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class MembershipController : ControllerBase
+
+public class MembershipController : BaseApiController
 {
     private readonly IMembershipService _membershipService;
 

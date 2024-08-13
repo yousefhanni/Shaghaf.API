@@ -26,33 +26,42 @@ namespace Shaghaf.Service.Services.Implementation
             _mapper = mapper;
             _paymentService = paymentService;
         }
+        private decimal CalculateTotalAmount(decimal amount, decimal? discount)
+        {
+            // حساب المبلغ النهائي بعد الخصم
+            decimal discountAmount = discount ?? 0m;
+            return amount - discountAmount;
+        }
 
-    public async Task<BookingDto> CreateBookingAsync(BookingToCreateDto bookingToCreateDto)
-{
-    var booking = _mapper.Map<Booking>(bookingToCreateDto);
+        public async Task<BookingDto> CreateBookingAsync(BookingToCreateDto bookingToCreateDto)
+        {
+            var booking = _mapper.Map<Booking>(bookingToCreateDto);
 
-    // Save the booking first to ensure it has a valid ID
-    await _unitOfWork.Repository<Booking>().AddAsync(booking);
-    await _unitOfWork.CompleteAsync(); // Save to get BookingId
+            // حساب TotalAmount
+            booking.TotalAmount = CalculateTotalAmount(bookingToCreateDto.Amount, bookingToCreateDto.Discount);
 
-    // Now create the payment session
-    var paymentSession = await _paymentService.CreateBookingCheckoutSession(new PaymentDto
-    {
-        Amount = booking.Amount,
-        Currency = booking.Currency,
-        SuccessUrl = "https://localhost:7095/success",
-        CancelUrl = "https://localhost:7095/cancel",
-        BookingId = booking.Id // Now we have a valid BookingId
-    });
+            // حفظ الحجز أولاً لضمان وجود معرف صالح
+            await _unitOfWork.Repository<Booking>().AddAsync(booking);
+            await _unitOfWork.CompleteAsync();
 
-    booking.PaymentStatus = false;
+            // إنشاء جلسة الدفع
+            var paymentSession = await _paymentService.CreateBookingCheckoutSession(new PaymentDto
+            {
+                Amount = booking.TotalAmount, // استخدام TotalAmount بدلاً من Amount
+                Currency = booking.Currency,
+                SuccessUrl = "https://localhost:7095/success",
+                CancelUrl = "https://localhost:7095/cancel",
+                BookingId = booking.Id
+            });
 
-    // Save the booking again with updated payment info
-    _unitOfWork.Repository<Booking>().Update(booking);
-    await _unitOfWork.CompleteAsync();
+            booking.PaymentStatus = false;
 
-    return _mapper.Map<BookingDto>(booking);
-}
+            // حفظ الحجز مرة أخرى مع تحديث معلومات الدفع
+            _unitOfWork.Repository<Booking>().Update(booking);
+            await _unitOfWork.CompleteAsync();
+
+            return _mapper.Map<BookingDto>(booking);
+        }
 
         public async Task UpdateBookingAsync(BookingDto bookingDto)
         {
@@ -63,6 +72,9 @@ namespace Shaghaf.Service.Services.Implementation
             {
                 throw new KeyNotFoundException("No booking found matching the specified criteria.");
             }
+
+            // إعادة حساب TotalAmount أثناء التحديث
+            booking.TotalAmount = CalculateTotalAmount(bookingDto.TotalAmount, bookingDto.Discount);
 
             booking = _mapper.Map(bookingDto, booking);
 

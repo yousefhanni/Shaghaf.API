@@ -7,7 +7,6 @@ namespace Shaghaf.Core.Entities.RoomEntities
     public class Room : BaseEntity
     {
         public string Name { get; set; } = null!; // Room name
-        public decimal Offer { get; set; } // Discount offer
         public decimal Rate { get; set; } // Room rate
         public int Seat { get; set; } // Number of seats
         public string Description { get; set; } = null!; // Room description

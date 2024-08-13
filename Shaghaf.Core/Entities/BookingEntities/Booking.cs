@@ -10,8 +10,8 @@ namespace Shaghaf.Core.Entities.BookingEntities
         public Booking() { }
 
         // Parameterized constructor
-        public Booking(DateTime startDate, DateTime endDate, string customerName, int seatCount, decimal amount,
-                       string currency, BookingStatus status, decimal discount, int roomId, Room room,
+        public Booking(DateTime startDate, DateTime endDate, string customerName, int seatCount, decimal totalAmount,
+                       string currency, BookingStatus status, decimal? discount, int roomId, Room room,
                        int? birthdayId, Birthday? birthday, int? photoSessionId, PhotoSession? photoSession,
                        ICollection<Order>? orders, string paymentIntentId, bool paymentStatus, string sessionId)
         {
@@ -19,7 +19,7 @@ namespace Shaghaf.Core.Entities.BookingEntities
             EndDate = endDate;
             CustomerName = customerName;
             SeatCount = seatCount;
-            Amount = amount;
+            TotalAmount = totalAmount;
             Currency = currency;
             Status = status;
             Discount = discount;
@@ -39,12 +39,11 @@ namespace Shaghaf.Core.Entities.BookingEntities
         public DateTime EndDate { get; set; } // End date of the booking
         public string CustomerName { get; set; } = null!; // Name of the customer
         public int SeatCount { get; set; } // Number of seats booked
-        public decimal Amount { get; set; } // Total amount for the booking
+        public decimal TotalAmount { get; set; } // Final total amount for the booking after discount
+        public decimal? Discount { get; set; } // Optional discount applied to the booking
         public string Currency { get; set; } = null!; // Currency of the amount
 
         public BookingStatus Status { get; set; } // Status of the booking
-        public decimal Discount { get; set; } // Discount applied to the booking
-
         public int RoomId { get; set; } // ID of the booked room
         public Room Room { get; set; } = null!; // Associated room
 

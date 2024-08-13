@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shaghaf.Core.Services.Contract;
+using Talabat.APIs.Controllers;
 
 namespace Shaghaf.API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class HomeController : ControllerBase
+   
+    public class HomeController : BaseApiController
     {
         private readonly IHomeService _homeService;
 

@@ -9,13 +9,13 @@
         public DateTime EndDate { get; set; }
         public string CustomerName { get; set; } = string.Empty;
         public int SeatCount { get; set; }
-        public decimal Amount { get; set; }
+        public decimal Amount { get; set; } // المبلغ الأساسي للحجز
+        public decimal? Discount { get; set; } // الخصم الاختياري
         public string Currency { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
-        public decimal Discount { get; set; }
         public string PaymentIntentId { get; set; } = string.Empty;
         public string SessionId { get; set; } = string.Empty;
         public bool PaymentStatus { get; set; }
-        public ICollection<OrderDto>? Orders { get; set; } // Optional associated orders
+        public ICollection<OrderDto>? Orders { get; set; } // الطلبات المرتبطة (اختياري)
     }
 }

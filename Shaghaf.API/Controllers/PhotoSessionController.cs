@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shaghaf.Core.Dtos.PhotoSessionDtos;
 using Shaghaf.Core.Services.Contract;
+using Talabat.APIs.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class PhotoSessionController : ControllerBase
+public class PhotoSessionController : BaseApiController
 {
     private readonly IPhotoSessionService _photoSessionService;
 

@@ -12,6 +12,6 @@ namespace Shaghaf.Core.Services.Contract
         Task<IReadOnlyList<BookingDto>> GetAllBookingDetailsAsync();
         Task<bool> CheckBookingPaymentStatusAsync(int bookingId);
         Task<bool> UpdatePaymentIntentAsync(int id, string paymentIntentId);
-        Task DeleteBookingAsync(int bookingId);  // إضافة طريقة الحذف
+        Task DeleteBookingAsync(int bookingId);
     }
 }

@@ -12,13 +12,13 @@ namespace Shaghaf.Core.Dtos.BookingDtos
         public DateTime EndDate { get; set; }
         public string CustomerName { get; set; } = string.Empty;
         public int SeatCount { get; set; }
-        public decimal Amount { get; set; }
+        public decimal TotalAmount { get; set; } // المبلغ النهائي بعد الخصم
+        public decimal? Discount { get; set; } // الخصم الاختياري
         public string Currency { get; set; } = string.Empty;
         public BookingStatus Status { get; set; }
-        public decimal Discount { get; set; }
-        public ICollection<OrderDto>? Orders { get; set; } // Optional associated orders
         public string PaymentIntentId { get; set; } = string.Empty; // Payment Intent ID
         public string SessionId { get; set; } = string.Empty; // Session ID
-        public bool PaymentStatus { get; set; } // Payment status for polling
+        public bool PaymentStatus { get; set; } // حالة الدفع
+        public ICollection<OrderDto>? Orders { get; set; } // الطلبات المرتبطة (اختياري)
     }
 }

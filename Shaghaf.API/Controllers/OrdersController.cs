@@ -3,10 +3,10 @@ using Shaghaf.Core.Services.Contract;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Shaghaf.Core.Dtos.PaymentDtos;
+using Talabat.APIs.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-public class OrdersController : ControllerBase
+
+public class OrdersController : BaseApiController
 {
     private readonly IOrderService _orderService;
     private readonly IPaymentService _paymentService;

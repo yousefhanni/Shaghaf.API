@@ -14,8 +14,6 @@ namespace Shaghaf.Core.Dtos.RoomDtos
 
         public string Plan { get; set; }
 
-        public decimal Offer { get; set; }
-
         public decimal Rate { get; set; }
 
         public string Name { get; set; } = null!;

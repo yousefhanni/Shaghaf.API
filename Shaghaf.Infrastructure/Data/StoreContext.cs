@@ -113,10 +113,6 @@ namespace Shaghaf.Infrastructure.Data
                 .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<Room>()
-                .Property(r => r.Offer)
-                .HasColumnType("decimal(18,2)");
-
-            modelBuilder.Entity<Room>()
                 .Property(r => r.Rate)
                 .HasColumnType("decimal(18,2)");
 

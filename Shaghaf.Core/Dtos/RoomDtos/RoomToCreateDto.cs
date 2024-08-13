@@ -2,7 +2,6 @@
 {
     public class RoomToCreateDto
     {
-        public decimal Offer { get; set; }
         public decimal Rate { get; set; }
         public string Name { get; set; } = null!;
         public int Seat { get; set; }

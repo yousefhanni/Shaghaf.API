@@ -19,6 +19,7 @@ namespace Shaghaf.API.Controllers
             _paymentService = paymentService;
             _logger = logger;
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingToCreateDto bookingToCreateDto)
         {
@@ -30,30 +31,8 @@ namespace Shaghaf.API.Controllers
             if (result == null)
                 return BadRequest(new { error = "Booking creation failed." });
 
-            var paymentSession = await _paymentService.CreateBookingCheckoutSession(
-                new PaymentDto
-                {
-                    Amount = result.Amount,
-                    Currency = bookingToCreateDto.Currency,
-                    SuccessUrl = "https://localhost:7095/success",
-                    CancelUrl = "https://localhost:7095/cancel",
-                    BookingId = result.Id
-                }
-            );
-
-            if (paymentSession == null)
-            {
-                return BadRequest(new { error = "Payment session creation failed." });
-            }
-
-            // Update the BookingToCreateDto with payment session information
-            result.PaymentIntentId = paymentSession.Id;
-            result.SessionId = paymentSession.Id;
-            result.PaymentStatus = false; // Assuming payment is not yet completed
-
             return Ok(result);
         }
-
 
         [HttpPut("{bookingId}")]
         public async Task<IActionResult> UpdateBooking(int bookingId, [FromBody] BookingDto bookingDto)
@@ -102,12 +81,12 @@ namespace Shaghaf.API.Controllers
 
             return Ok(new { success = "Payment confirmed for the booking." });
         }
+
         [HttpDelete("{bookingId}")]
         public async Task<IActionResult> DeleteBooking(int bookingId)
         {
             await _bookingService.DeleteBookingAsync(bookingId);
             return NoContent();
         }
-
     }
 }

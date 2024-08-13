@@ -3,13 +3,12 @@ using Shaghaf.Core.Dtos.MenuItemDtos;
 using Shaghaf.Core.Services.Contract;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Talabat.APIs.Controllers;
 
 namespace Shaghaf.API.Controllers
 {
     // Indicates that this is an API controller and sets the base route for all actions in this controller
-    [ApiController]
-    [Route("api/[controller]")]
-    public class MenuItemsController : ControllerBase
+    public class MenuItemsController : BaseApiController
     {
         private readonly IMenuItemService _menuItemService;
 

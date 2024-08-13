@@ -86,7 +86,7 @@ namespace Shaghaf.Application.Mappings
 
             // Payment mappings
             CreateMap<PaymentDto, Booking>()
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.Amount))
                 .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.Currency))
                 .ForMember(dest => dest.Discount, opt => opt.Ignore())
                 .ReverseMap();
