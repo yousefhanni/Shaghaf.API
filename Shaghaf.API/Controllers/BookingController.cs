@@ -2,12 +2,12 @@
 using Shaghaf.Core.Dtos.BookingDtos;
 using Shaghaf.Core.Dtos.PaymentDtos;
 using Shaghaf.Core.Services.Contract;
+using Talabat.APIs.Controllers;
 
 namespace Shaghaf.API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class BookingController : ControllerBase
+   
+    public class BookingController : BaseApiController
     {
         private readonly IBookingService _bookingService;
         private readonly IPaymentService _paymentService;

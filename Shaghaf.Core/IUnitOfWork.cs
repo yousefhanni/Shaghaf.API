@@ -2,7 +2,6 @@
 using Shaghaf.Core.Entities;
 using Shaghaf.Core.Repositories.Contract;
 using System;
-using System.Threading.Tasks;
 
 namespace Shaghaf.Core
 {

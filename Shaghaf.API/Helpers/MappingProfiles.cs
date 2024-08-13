@@ -41,23 +41,6 @@ namespace Shaghaf.Application.Mappings
                 .ForMember(dest => dest.MembershipIds, opt => opt.MapFrom(src => src.Memberships.Select(m => m.Id).ToList()))
                 .ReverseMap();
 
-
-
-            //// Mapping for Cake and CakeDto
-            //CreateMap<Cake, CakeDto>().ReverseMap();
-
-            //// Mapping for Decoration and DecorationDto
-            //CreateMap<Decoration, DecorationDto>().ReverseMap();
-
-            //// Mapping for Birthday and BirthdayDto
-            //CreateMap<Birthday, BirthdayDto>()
-            //    .ForMember(dest => dest.Cakes, opt => opt.MapFrom(src => src.Cakes))
-            //    .ForMember(dest => dest.Decorations, opt => opt.MapFrom(src => src.Decorations))
-            //    .ReverseMap();
-
-            //// Mapping for BirthdayToCreateDto to Birthday
-            //CreateMap<BirthdayToCreateDto, Birthday>();
-
             // PhotoSession mappings
             CreateMap<PhotoSessionToCreateDto, PhotoSession>()
                 .ForMember(dest => dest.Room, opt => opt.Ignore());
