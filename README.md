@@ -206,15 +206,29 @@ For detailed API documentation, please refer to [API_Documentation.md](./API_Doc
 Ensure `appsettings.json` is properly configured:
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "YourConnectionStringHere"
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
   },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.;Database=Shaghafff.APIs;Trusted_Connection=True;TrustServerCertificate=True",
+    "IdentityConnection": "Server=.;Database=Shaghaf.Identity;Trusted_Connection=True;TrustServerCertificate=True",
+    "Redis": "localhost"
+  },
+  "ApiBaseUrl": "https://localhost:7095",
   "Stripe": {
-    "PublicKey": "YourStripePublicKey",
-    "SecretKey": "YourStripeSecretKey"
+    "SecretKey": "sk_test_yourSecretKeyHere",
+    "PublishableKey": "pk_test_yourPublishableKeyHere"
+  },
+  "Jwt": {
+    "Key": "yourJwtKeyHere",
+    "Issuer": "SecureApi",
+    "Audience": "SecureApiUser",
+    "DurationInDays": 30
   }
 }
-
-
 
 
