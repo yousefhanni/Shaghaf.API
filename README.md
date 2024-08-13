@@ -2,7 +2,11 @@
 Shaghaf is a comprehensive application designed for booking and renting various rooms for multiple purposes such as training, meetings, social events, and birthday parties. The application provides user-friendly interfaces to display rooms, book them, manage memberships, and order additional services like food and photo sessions.
 
 ## Technical Details
-Shaghaf API is a sophisticated .NET 7.0 Web API designed to facilitate the booking and rental of rooms for various events. Leveraging Onion Architecture for scalability and maintainability, it incorporates advanced features like data seeding, error handling, and filtration, alongside secure payment integration via Stripe.
+# Shaghaf API
+
+Shaghaf API is a modular and scalable web application designed to manage bookings, orders, memberships, and more. The application is built using modern technologies and follows the Onion Architecture to ensure a clear separation of concerns, scalability, and maintainability.
+
+## Technologies
 
 - **.NET 7.0**
 - **Entity Framework Core (EF Core)**
@@ -13,17 +17,16 @@ Shaghaf API is a sophisticated .NET 7.0 Web API designed to facilitate the booki
 - **MS SQL Server**
 - **JWT Authentication**
 - **Identity for User Management**
-  
-### Architecture
-The API is structured into several layers:
+- **Redis** (used for storing cart items)
+
+## Architecture
+
+Shaghaf API is structured using Onion Architecture, which focuses on the following layers:
+
 * **Shaghaf.API**: Manages incoming HTTP requests and middleware.
 * **Shaghaf.Core**: Houses the core business logic and domain models.
 * **Shaghaf.Infrastructure**: Manages data access via EF Core, using patterns like Generic Repository and Unit of Work.
 * **Shaghaf.Service**: Provides service layer functionalities.
-
-# Shaghaf API Overview
-
-Shaghaf API is a comprehensive platform for booking and managing spaces and services tailored for various events such as training sessions, meetings, social gatherings, and special celebrations like birthday parties. It not only facilitates room bookings but also manages memberships, photo sessions, and other related services to enhance user experiences.
 
 ## System Components
 
@@ -71,187 +74,128 @@ Shaghaf also provides robust account management functionalities, allowing users 
 - **Add Role**: Admins can assign roles to users, enhancing control over permissions and access.
 
 ### 7. Home Data Management
-The `HomeController` facilitates retrieval and management of home-related data, essential for displaying dynamic content on the platform:
-- **Advertisements**: Manage and retrieve advertisements which enhance user interaction.
-- **Categories**: Handle categories which organize the services and rooms into manageable sections.
+The system allows administrators to manage various data points displayed on the home page, including advertisements and categories.
 
-## Controllers Overview
-- **RoomController**: Manages all aspects of room listings and bookings.
-- **BirthdayController**: Specialized controller for handling all birthday-related bookings and services.
-- **PhotoSessionController**: Manages the booking and scheduling of photo sessions.
-- **MembershipController**: Oversees the creation and management of membership services.
-- **BookingController**: Central controller for handling all types of bookings and related services.
-- **AccountController**: Manages user authentication and role assignments, crucial for system access and administration.
-- **HomeController**: Manages retrieval of home data, including advertisements and categories, to support platform operations and user engagement.
+## Generic Repository and Unit of Work
 
+Shaghaf API utilizes the Generic Repository pattern and the Unit of Work pattern to manage data access operations consistently and efficiently across different entities.
 
-# Shaghaf Services
+- **Generic Repository**: A reusable repository pattern that provides a consistent interface for CRUD operations. The `GenericRepository` class implements common data access operations, ensuring that all repositories adhere to the same standard and reducing code duplication.
 
-## Overview
+- **Unit of Work**: The `UnitOfWork` pattern manages transactions across multiple repository operations, ensuring consistency and integrity. This pattern is crucial in scenarios where multiple changes need to be committed to the database as a single atomic operation, thereby preventing partial updates and maintaining data consistency.
 
-Shaghaf Services is a comprehensive suite of services designed to manage various aspects of a business, including birthday events, bookings, memberships, payments, and more. These services utilize AutoMapper for object-object mapping and follow best practices for asynchronous programming and dependency injection.
+The following specific repositories are implemented within the Shaghaf API:
 
-## Table of Contents
-- [Birthday Service](#birthday-service)
-- [Booking Service](#booking-service)
-- [Auth Service](#auth-service)
-- [Home Service](#home-service)
-- [Membership Service](#membership-service)
-- [Payment Service](#payment-service)
-- [Photo Session Service](#photo-session-service)
-- [Room Service](#room-service)
-
-## Birthday Service
-
-The `BirthdayService` manages birthday events, including creation, updating, retrieval, and listing of birthday details.
-
-### Methods
-
-- **CreateBirthdayAsync**: This method allows for the creation of a new birthday event. It takes in a data transfer object (DTO) that contains the necessary information to create the event and returns the created event as a DTO.
-- **UpdateBirthdayAsync**: This method updates an existing birthday event. It requires a DTO with the updated birthday details and updates the corresponding record in the database.
-- **GetBirthdayByIdAsync**: This method retrieves a birthday event by its ID. It takes the ID as a parameter and returns the birthday details as a DTO.
-- **GetAllBirthdaysAsync**: This method retrieves all birthday events. It returns a list of birthday events as DTOs.
-
-## Booking Service
-
-The `BookingService` handles bookings, including creation, updating, retrieval, and listing of booking details.
-
-### Methods
-
-- **CreateBookingAsync**: This method creates a new booking. It takes a DTO with the booking details and returns the created booking as a DTO.
-- **UpdateBookingAsync**: This method updates an existing booking. It requires a DTO with the updated booking details and updates the corresponding record in the database.
-- **GetBookingDetailsAsync**: This method retrieves booking details by ID. It takes the booking ID as a parameter and returns the booking details as a DTO.
-- **GetAllBookingDetailsAsync**: This method retrieves all booking details. It returns a list of booking details as DTOs.
-
-## Auth Service
-
-The `AuthService` manages user authentication and authorization, including user registration, login, and role management.
-
-### Methods
-
-- **RegisterAsync**: This method registers a new user. It takes a model with the user's registration details and returns an authentication model containing the registration result and a JWT token if successful.
-- **LoginAsync**: This method logs in an existing user. It takes a model with the user's login details and returns an authentication model containing the login result and a JWT token if successful.
-- **AddRoleAsync**: This method adds a role to a user. It takes a model with the user's ID and the role to be added, and returns a result message.
-- **CreateJwtToken**: This method generates a JWT token for a user. It takes a user entity and returns a JWT token containing user claims and roles.
-
-## Home Service
-
-The `HomeService` retrieves home-related data, advertisements, and categories.
-
-### Methods
-
-- **GetHomeDataAsync**: This method retrieves home data. It returns a list of home entities.
-- **GetAdvertisementsAsync**: This method retrieves advertisements. It returns a list of advertisement DTOs.
-- **GetCategoriesAsync**: This method retrieves categories. It returns a list of category DTOs.
-
-## Membership Service
-
-The `MembershipService` manages memberships, including creation, updating, retrieval, and listing of membership details.
-
-### Methods
-
-- **CreateMembershipAsync**: This method creates a new membership. It takes a DTO with the membership details and returns the created membership as a DTO.
-- **UpdateMembershipAsync**: This method updates an existing membership. It requires a DTO with the updated membership details and updates the corresponding record in the database.
-- **GetMembershipByIdAsync**: This method retrieves a membership by its ID. It takes the ID as a parameter and returns the membership details as a DTO.
-- **GetAllMembershipsAsync**: This method retrieves all memberships. It returns a list of membership DTOs.
-
-## Payment Service
-
-The `PaymentService` handles payment processing, including creating checkout sessions and handling payment status updates.
-
-### Methods
-
-- **CreateCheckoutSession**: This method creates a Stripe checkout session. It takes a DTO with payment details and returns the created checkout session.
-- **HandleStripeEvent**: This method handles Stripe events for payment status updates. It takes the event data and updates the payment status accordingly.
-- **UpdatePaymentIntentToSucceedOrFail**: This method updates the payment intent status. It takes the payment intent ID and a boolean indicating whether the payment succeeded or failed, and updates the booking status accordingly.
-- **CheckPaymentStatusAsync**: This method checks the payment status for a booking. It takes the booking ID and returns the current payment status.
-
-## Photo Session Service
-
-The `PhotoSessionService` manages photo sessions, including creation, updating, retrieval, and listing of photo session details.
-
-### Methods
-
-- **CreatePhotoSessionAsync**: This method creates a new photo session. It takes a DTO with the photo session details and returns the created photo session as a DTO.
-- **UpdatePhotoSessionAsync**: This method updates an existing photo session. It requires a DTO with the updated photo session details and updates the corresponding record in the database.
-- **GetPhotoSessionByIdAsync**: This method retrieves a photo session by its ID. It takes the ID as a parameter and returns the photo session details as a DTO.
-- **GetAllPhotoSessionsAsync**: This method retrieves all photo sessions. It returns a list of photo session DTOs.
-
-## Room Service
-
-The `RoomService` manages rooms, including creation, updating, retrieval, and listing of room details.
-
-### Methods
-
-- **CreateRoomAsync**: This method creates a new room. It takes a DTO with the room details and returns the created room as a DTO.
-- **UpdateRoomAsync**: This method updates an existing room. It requires a DTO with the updated room details and updates the corresponding record in the database.
-- **GetRoomByIdAsync**: This method retrieves a room by its ID. It takes the ID as a parameter and returns the room details as a DTO.
-- **GetAllRoomsAsync**: This method retrieves all rooms. It returns a list of room DTOs.
-- **GetRoomsWithSpecAsync**: This method retrieves rooms based on specific criteria. It takes a specification object and returns a list of room DTOs matching the criteria.
+- **BookingRepository**: Manages data access for booking-related entities.
+- **CartRepository**: Handles CRUD operations for cart items, particularly leveraging Redis for efficient in-memory data storage.
 
 
+## Controllers
 
-### Entities
+- **AccountController**
+- **BookingController**
+- **CartController**
+- **OrdersController**
+- **MembershipController**
+- **PhotoSessionController**
+- **RoomController**
+- **HomeController**
 
-Entities are models representing the core components of the system. They include:
 
-- **HomeEntities**:
-  - **Home**: Represents home-related data.
-    - Fields: `Id`, `Name`, `Description`, `Location`, `CreatedDate`, etc.
-  - **Advertisement**: Represents advertisements related to homes.
-    - Fields: `Id`, `Title`, `Content`, `CreatedDate`, etc.
-  - **Category**: Represents categories related to homes.
-    - Fields: `Id`, `Name`, `Description`, etc.
-  - **Location**: Represents the location details.
-    - Fields: `Id`, `Address`, `City`, `State`, `Country`, `ZipCode`, etc.
+### **Entities**
+- **Room**: Represents rooms available for booking, including various types and attributes.
+- **Birthday**: Manages birthday event details, including cakes, decorations, and associated room bookings.
+- **PhotoSession**: Handles photo session details, including cost, duration, and location.
+- **Membership**: Represents different membership plans available to users, including features and benefits.
+- **Booking**: Central entity for managing room and event bookings.
+- **Order**: Handles the ordering process, including payment and cart management.
+- **Cart**: Manages items added to the user's cart for ordering.
+- **MenuItem**: Represents menu items available for order in the system.
 
-- **RoomEntities**:
-  - **Room**: Represents room details for booking and management.
-    - Fields: `Id`, `Name`, `Description`, `Capacity`, `Price`, `CreatedDate`, etc.
-  - **RoomPlan**: Represents the plan of the room.
-    - Fields: `Id`, `RoomId`, `PlanDetails`, etc.
-  - **RoomType**: Represents the type of the room.
-    - Fields: `Id`, `TypeName`, `Description`, etc.
+### **Services**
+- **AuthService**: Manages user authentication, registration, and role management.
+- **BookingService**: Handles the booking process, including creation, updating, and payment processing.
+- **OrderService**: Manages the ordering process, including payment, cart management, and order status checking.
+- **MembershipService**: Handles the creation and management of memberships.
+- **PhotoSessionService**: Manages the scheduling and details of photo sessions.
+- **RoomService**: Handles the creation and management of rooms.
 
-- **BookingEntities**:
-  - **Booking**: Represents booking details for rooms and events.
-    - Fields: `Id`, `RoomId`, `CustomerName`, `StartDate`, `EndDate`, `Status`, `CreatedDate`, etc.
-  - **BookingStatus**: Represents the status of the booking.
-    - Fields: `Id`, `StatusName`, `Description`, etc.
-  - **AdditionalItem**: Represents additional items for the booking.
-    - Fields: `Id`, `BookingId`, `ItemName`, `Quantity`, `Price`, etc.
+### **IServices (Interfaces)**
+- **IAuthService**
+- **IBookingService**
+- **IOrderService**
+- **IMembershipService**
+- **IPhotoSessionService**
+- **IRoomService**
 
-- **BirthdayEntity**:
-  - **Birthday**: Represents birthday event details.
-    - Fields: `Id`, `Title`, `Description`, `Date`, `Location`, `Organizer`, etc.
-  - **Cake**: Represents details about the cake for the birthday.
-    - Fields: `Id`, `BirthdayId`, `CakeType`, `Flavor`, `Size`, etc.
-  - **Decoration**: Represents decoration details for the birthday.
-    - Fields: `Id`, `BirthdayId`, `DecorationType`, `Description`, etc.
+## Redis Integration
 
-- **IdentityEntities**:
-  - **AppUser**: Represents the application user.
-    - Fields: `Id`, `UserName`, `PhoneNumber`, `PasswordHash`, etc.
-  - **AddRoleModel**: Represents a model to add roles to users.
-    - Fields: `UserId`, `Role`, etc.
-  - **AuthModel**: Represents authentication details.
-    - Fields: `UserName`, `Token`, `ExpiresOn`, `Roles`, etc.
-  - **LoginModel**: Represents login details.
-    - Fields: `PhoneNumber`, `Password`, etc.
-  - **RegisterModel**: Represents registration details.
-    - Fields: `UserName`, `PhoneNumber`, `Password`, etc.
+### **Redis Database**
+- Redis is used for caching data, particularly for managing shopping cart data. It provides fast, in-memory data storage, which improves the performance and scalability of the application.
 
-- **MembershipEntity**:
-  - **Membership**: Represents membership details.
-    - Fields: `Id`, `Type`, `Cost`, `Duration`, `Benefits`, etc.
+### **Redis Services**
+- **CartRepository**: Manages the operations related to the cart in Redis, including retrieval, updating, and deletion.
+- **Redis Cache**: Provides caching for frequently accessed data, reducing database load and improving response times.
 
-- **PhotoSessionEntity**:
-  - **PhotoSession**: Represents photo session details.
-    - Fields: `Id`, `Title`, `Description`, `Date`, `Location`, etc.
+### **Redis IServices (Interfaces)**
+- **ICartRepository**: Interface for managing cart operations in Redis.
 
-### DTOs
+## Mappings
 
-DTOs (Data Transfer Objects) are used for efficient data transfer across different layers of the application.
+AutoMapper is used to map between Data Transfer Objects (DTOs) and entities, ensuring that data is transformed correctly as it moves between different layers of the application.
+
+## Specifications
+
+Specifications are used to encapsulate complex query logic, allowing for flexible and maintainable data retrieval. Examples include:
+
+- **BookingWithDetailsSpec**: Retrieves booking details along with associated orders.
+- **MenuItemByCategorySpec**: Filters menu items by category.
+- **RoomsWithMembershipsSpec**: Retrieves rooms along with their associated memberships.
+Shaghaf API is a comprehensive web application designed to manage various business operations, including room bookings, memberships, orders, and more. The application adopts a robust Onion Architecture, utilizing modern technologies to ensure scalability, maintainability, and performance. Built with ASP.NET Core and Entity Framework Core, the API provides a secure, efficient, and modular backend system.
+
+
+## DTOs (Data Transfer Objects)
+
+DTOs play a crucial role in the Shaghaf API by ensuring that only the necessary data is passed between the client and the server. Here are the key DTOs used in the project:
+
+- **BirthdayDtos**:
+  - `BirthdayDto.cs`: Represents a birthday event with details like cakes, decorations, and room information.
+  - `BirthdayToCreateDto.cs`: Used for creating new birthday events.
+
+- **BookingDtos**:
+  - `BookingDto.cs`: Represents the booking details, including room, birthday, and photo session information.
+  - `BookingToCreateDto.cs`: Used for creating new bookings.
+
+- **CartDtos**:
+  - `CartItemDto.cs`: Represents an item in the customer's cart.
+  - `CustomerCartDto.cs`: Represents the customer's cart containing multiple items.
+
+- **MembershipDtos**:
+  - `MembershipDto.cs`: Represents a membership, including the rooms associated with it.
+  - `MembershipToCreateDto.cs`: Used for creating new memberships.
+
+- **MenuItemDtos**:
+  - `MenuItemDto.cs`: Represents a menu item available in the system.
+  - `MenuItemToCreateDto.cs`: Used for creating new menu items.
+
+- **OrderDtos**:
+  - `OrderDto.cs`: Represents an order placed by a customer.
+  - `OrderItemDto.cs`: Represents an item within an order.
+  - `OrderToReturnDto.cs`: Represents the details of an order to be returned to the client.
+
+- **PaymentDtos**:
+  - `PaymentDto.cs`: Represents payment details for bookings or orders.
+  - `PaymentStatusDto.cs`: Represents the status of a payment.
+  - `UpdatePaymentIntentDto.cs`: Used for updating the payment intent ID after creating a payment session.
+
+- **PhotoSessionDtos**:
+  - `PhotoSessionDto.cs`: Represents details of a photo session.
+  - `PhotoSessionToCreateDto.cs`: Used for creating new photo sessions.
+
+- **RoomDtos**:
+  - `RoomDto.cs`: Represents a room available for booking.
+  - `RoomToCreateDto.cs`: Used for creating new rooms.
+  
 
 ## API Documentation
 
