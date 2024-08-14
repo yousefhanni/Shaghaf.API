@@ -24,6 +24,7 @@ using Stripe.Climate;
 using Microsoft.OpenApi.Models;
 using Shaghaf.Core.Entities.OrderEntities;
 using Shaghaf.Service.Services.Implementation;
+using Shaghaf.Service.Settings;
 
 namespace Shaghaf.API
 {
@@ -85,7 +86,7 @@ namespace Shaghaf.API
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IMenuItemService, MenuItemService>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
-
+ 
             builder.Services.AddScoped<IOrderService, Shaghaf.Service.Services.Implementation.OrderService>();
 
 
@@ -94,7 +95,7 @@ namespace Shaghaf.API
             builder.Services.AddAutoMapper(typeof(MappingProfile));
 
             //DI to AuthService
-            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddTransient<IAuthService, AuthService>();
 
             builder.Services.AddLogging(); // Ensure logging is added
 
@@ -107,12 +108,18 @@ namespace Shaghaf.API
             StripeConfiguration.ApiKey = stripeSettings.SecretKey;
             #endregion
 
+            #region Twilio configurations
+            builder.Services.Configure<TwilioSettings>(builder.Configuration.GetSection("Twilio"));
+            builder.Services.AddTransient<ISMSService, SMSService>();
+            #endregion
 
             #region JWT configurations
 
             // Add Identity services to the application
             // IdentityRole: Represents a role in the ASP.NET Core Identity system
-            builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            builder.Services.AddIdentity<AppUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddDefaultTokenProviders(); // This adds token providers like DataProtectionTokenProvider
             // Bind the JWT configuration section from appsettings.json to the JWT settings class
             builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
 
@@ -158,6 +165,17 @@ namespace Shaghaf.API
                     }
                 };
             });
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
+
             #endregion
 
             #endregion
@@ -196,6 +214,7 @@ namespace Shaghaf.API
 
             app.UseStaticFiles();
             app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
 
             app.UseRouting(); // Use routing
 

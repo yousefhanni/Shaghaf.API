@@ -1,27 +1,34 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Shaghaf.API.Helpers;
+using Shaghaf.Core.Entities.IdentityEntities;
+using Shaghaf.Core.Services.Contract;
+using Shaghaf.Infrastructure.Services;
+using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Shaghaf.Core.Entities.IdentityEntities;
-using Shaghaf.API.Helpers;
-using Microsoft.EntityFrameworkCore;
-using Shaghaf.Infrastructure.Services;
 
-namespace Shaghaf.Service.Sevices.Implementaion
+namespace Shaghaf.Service.Services.Implementation
 {
     public class AuthService : IAuthService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JWTSettings _jwt;
+        private readonly ISMSService _smsService;
 
-        public AuthService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWTSettings> jwt)
+        private static readonly ConcurrentDictionary<string, string> VerificationCodes = new ConcurrentDictionary<string, string>();
+
+        public AuthService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWTSettings> jwt, ISMSService smsService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _jwt = jwt.Value;
+            _smsService = smsService;
         }
 
         public async Task<AuthModel> RegisterAsync(RegisterModel model)
@@ -97,6 +104,57 @@ namespace Shaghaf.Service.Sevices.Implementaion
             var result = await _userManager.AddToRoleAsync(user, model.Role);
 
             return result.Succeeded ? string.Empty : "Something went wrong";
+        }
+
+        // Send Verification Code
+        public async Task<bool> SendVerificationCodeAsync(string phoneNumber)
+        {
+            var verificationCode = new Random().Next(100000, 999999).ToString();
+            var result = _smsService.Send(phoneNumber, $"Your verification code is {verificationCode}");
+
+            if (result.ErrorCode != null)
+            {
+                return false;
+            }
+
+            VerificationCodes[phoneNumber] = verificationCode;
+
+            return true;
+        }
+
+        // Verify Code
+        public Task<bool> VerifyCodeAsync(string phoneNumber, string code)
+        {
+            if (VerificationCodes.TryGetValue(phoneNumber, out var storedCode))
+            {
+                if (storedCode == code)
+                {
+                    VerificationCodes.TryRemove(phoneNumber, out _);
+                    return Task.FromResult(true);
+                }
+            }
+            return Task.FromResult(false);
+        }
+
+        // Reset Password
+        public async Task<bool> ResetPasswordAsync(string phoneNumber, string newPassword, string confirmPassword)
+        {
+            if (newPassword != confirmPassword)
+            {
+                return false;
+            }
+
+            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+
+            return result.Succeeded;
         }
 
         private async Task<JwtSecurityToken> CreateJwtToken(AppUser user)
