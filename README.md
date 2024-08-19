@@ -1,5 +1,5 @@
 ## Shaghaf Overview
-Shaghaf is a comprehensive application designed for booking and renting various rooms for multiple purposes such as training, meetings, social events, and birthday parties. The application provides user-friendly interfaces to display rooms, book them, manage memberships, and order additional services like food and photo sessions.
+Shaghaf is a comprehensive application designed for booking and renting various rooms for multiple purposes such as training, meetings, social events, and birthday parties. The application provides user-friendly interfaces to display rooms, book them, manage memberships,  and order additional services like ordering drinks and food. You can also conveniently book a photo session in any of our themed rooms.
 
 ## Technical Details
 # Shaghaf API
