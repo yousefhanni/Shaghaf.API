@@ -4,21 +4,40 @@
 
 - **Register**
   - **POST /api/account/register**
-  - Description: Register a new user account.
-  - Request Body: `RegisterModel`
-  - Returns: Registration details including token and roles.
+  - **Description**: Register a new user account.
+  - **Request Body**: `RegisterModel`
+  - **Returns**: Registration details including token and roles.
 
 - **Login**
   - **POST /api/account/login**
-  - Description: Log in an existing user.
-  - Request Body: `LoginModel`
-  - Returns: Login details including token and roles.
+  - **Description**: Log in an existing user.
+  - **Request Body**: `LoginModel`
+  - **Returns**: Login details including token and roles.
 
 - **Add Role**
   - **POST /api/account/addrole**
-  - Description: Adds a role to a user. Admin access required.
-  - Request Body: `AddRoleModel`
-  - Returns: Confirmation message.
+  - **Description**: Adds a role to a user. Admin access required.
+  - **Request Body**: `AddRoleModel`
+  - **Returns**: Confirmation message.
+
+- **Send Verification Code**
+  - **POST /api/account/send-verification**
+  - **Description**: Sends an SMS verification code to the user's phone.
+  - **Request Body**: `VerificationRequestModel`
+  - **Returns**: Confirmation message.
+
+- **Verify Code**
+  - **POST /api/account/verify-code**
+  - **Description**: Verifies the SMS code sent to the user's phone.
+  - **Request Body**: `VerifyCodeRequestModel`
+  - **Returns**: Confirmation message or error if the code is invalid.
+
+- **Reset Password**
+  - **POST /api/account/reset-password**
+  - **Description**: Resets the user's password after verifying the SMS code.
+  - **Request Body**: `ResetPasswordRequestModel`
+  - **Returns**: Confirmation message indicating whether the password reset was successful.
+
 
 ### BirthdayController
 

@@ -1,5 +1,5 @@
 ## Shaghaf Overview
-Shaghaf is a comprehensive application designed for booking and renting various rooms for multiple purposes such as training, meetings, social events, and birthday parties. The application provides user-friendly interfaces to display rooms, book them, manage memberships, and order additional services like food and photo sessions.
+Shaghaf is a comprehensive application designed for booking and renting various rooms for multiple purposes such as training, meetings, social events, and birthday parties. The application provides user-friendly interfaces to display rooms, book them, manage memberships,  and order additional services like ordering drinks and food. You can also conveniently book a photo session in any of our themed rooms.
 
 ## Technical Details
 # Shaghaf API
@@ -18,6 +18,7 @@ Shaghaf API is a modular and scalable web application designed to manage booking
 - **JWT Authentication**
 - **Identity for User Management**
 - **Redis** (used for storing cart items)
+- **Twilio SMS Integration** (for sending verification codes and password reset functionality)
 
 ## Architecture
 
@@ -72,7 +73,9 @@ Shaghaf also provides robust account management functionalities, allowing users 
 - **Register**: Users can create new accounts.
 - **Login**: Account holders can log into the system.
 - **Add Role**: Admins can assign roles to users, enhancing control over permissions and access.
-
+- **SMS Verification**: Secure accounts using SMS-based verification for registration and password reset.
+- **Reset Password**: Securely reset passwords using SMS verification.
+- 
 ### 7. Home Data Management
 The system allows administrators to manage various data points displayed on the home page, including advertisements and categories.
 
@@ -214,7 +217,7 @@ Ensure `appsettings.json` is properly configured:
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {
-    "DefaultConnection": "Server=.;Database=Shaghafff.APIs;Trusted_Connection=True;TrustServerCertificate=True",
+    "DefaultConnection": "Server=.;Database=Shaghaf.APIs;Trusted_Connection=True;TrustServerCertificate=True",
     "IdentityConnection": "Server=.;Database=Shaghaf.Identity;Trusted_Connection=True;TrustServerCertificate=True",
     "Redis": "localhost"
   },
@@ -228,7 +231,11 @@ Ensure `appsettings.json` is properly configured:
     "Issuer": "SecureApi",
     "Audience": "SecureApiUser",
     "DurationInDays": 30
+  },
+  "Twilio": {
+    "AccountSID": "yourTwilioAccountSID",
+    "AuthToken": "yourTwilioAuthToken",
+    "TwilioPhoneNumber": "+1234567821"
   }
-}
 
 
